@@ -1,0 +1,8 @@
+program prueba;
+var int a, b;
+main {
+    a = 5;
+    b = a + 3 * 2;
+    print(a, b);
+}
+end

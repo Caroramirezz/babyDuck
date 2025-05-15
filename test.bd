@@ -1,0 +1,7 @@
+program demo;
+var int x, y;
+main {
+  x = 5;
+  print(x);
+}
+end
