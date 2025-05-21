@@ -1,0 +1,10 @@
+program testCase;
+var int m, n;
+var float f;
+main {
+    m = 42;
+    n = m * 2 + 5;
+    f = n / 2.0;
+    print(m, n, f);
+}
+end
