@@ -1,203 +1,149 @@
 import org.antlr.v4.runtime.tree.TerminalNode;
+import java.util.*;
 
 public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
     private final FunctionDirectory dir = new FunctionDirectory();
     private final QuadrupleGenerator qg = new QuadrupleGenerator();
     private final VirtualMemoryManager vmm = new VirtualMemoryManager();
 
-
     public SemanticVisitor() {
+        // Contexto global
         dir.addFunction("global", "void");
         dir.setCurrentFunction("global");
     }
 
-    // Exponer el directorio y el generador para Main.java
-    public FunctionDirectory getFunctionDirectory() {
-        return dir;
-    }
-
-    public QuadrupleGenerator getQuadGenerator() {
-        return qg;
-    }
+    public FunctionDirectory getFunctionDirectory() { return dir; }
+    public QuadrupleGenerator getQuadGenerator()    { return qg;  }
 
     @Override
     public Void visitPrograma(BabyDuckParser.ProgramaContext ctx) {
-        // Visitar vars, funcs, body…
-        super.visitPrograma(ctx);
+        // Visitar vars, funcs y body en orden
+        visit(ctx.vars());
+        visit(ctx.funcs());
+        visit(ctx.body());
+        return null;
+    }
+
+    @Override
+    public Void visitVars(BabyDuckParser.VarsContext ctx) {
+        // vars : ( VAR idList COLON type SEMICOLON )* ;
+        if (ctx.VAR().isEmpty()) return null;
+        List<BabyDuckParser.IdListContext> lists = ctx.idList();
+        List<BabyDuckParser.TypeContext>     types = ctx.type();
+        for (int i = 0; i < lists.size(); i++) {
+            String ty = types.get(i).getText();
+            for (TerminalNode idNode : lists.get(i).ID()) {
+                String id = idNode.getText();
+                int addr = vmm.allocGlobal(ty);
+                dir.addVariableToCurrent(id, ty, addr);
+            }
+        }
         return null;
     }
 
     @Override
     public Void visitFuncs(BabyDuckParser.FuncsContext ctx) {
-        if (ctx.ID() == null) {
-            return null;
+        // funcs : ( VOID ID LPAREN paramList? RPAREN vars body SEMICOLON )* ;
+        List<TerminalNode> voids = ctx.VOID();
+        for (int i = 0; i < voids.size(); i++) {
+            String fname = ctx.ID(i).getText();            
+            // Generar etiqueta de inicio de función
+            qg.generateFuncBegin(fname);
+            dir.addFunction(fname, "void");
+            dir.setCurrentFunction(fname);
+
+            // Parámetros formales si existen
+            if (ctx.paramList(i) != null) {
+                BabyDuckParser.ParamListContext p = ctx.paramList(i);
+                for (int j = 0; j < p.ID().size(); j++) {
+                    String pname = p.ID(j).getText();
+                    String ptype = p.type(j).getText();
+                    int paddr = vmm.allocLocal(ptype);
+                    dir.addVariableToCurrent(pname, ptype, paddr);
+                    dir.getFunction(fname).addParamType(ptype);
+                }
+            }
+
+            // Variables locales y cuerpo de la función
+            visit(ctx.vars(i));
+            visit(ctx.body(i));
+
+            // Fin de la función
+            qg.generateFuncEnd();
+            dir.setCurrentFunction("global");
         }
-
-        String funcName = ctx.ID().getText();
-        if (!dir.addFunction(funcName, "void")) {
-            throw new RuntimeException("Función duplicada: " + funcName);
-        }
-        dir.setCurrentFunction(funcName);
-
-        if (ctx.vars() != null)
-            visit(ctx.vars());
-        visit(ctx.body());
-
-        dir.setCurrentFunction("global");
         return null;
     }
 
     @Override
-public Void visitVars(BabyDuckParser.VarsContext ctx) {
-    // Si este nodo no corresponde a VAR ... SEMICOLON vars, lo ignoramos
-    if (ctx.VAR() == null) {
-        return null;
-    }
-
-    // Ahora sí seguro hay type(), ID(), listaIds() y SEMICOLON
-    String type = ctx.type().getText();
-
-    // Primera variable de la línea
-    int addr0 = vmm.allocGlobal(type);
-    String id0 = ctx.ID().getText();
-    dir.addVariableToCurrent(id0, type, addr0);
-
-    // Variables adicionales
-    for (TerminalNode idNode : ctx.listaIds().ID()) {
-        int addr = vmm.allocGlobal(type);
-        String id = idNode.getText();
-        dir.addVariableToCurrent(id, type, addr);
-    }
-
-    // Recurre para la siguiente vars (si existe)
-    if (ctx.vars() != null) {
-        visit(ctx.vars());
-    }
-    return null;
-}
-
-
-@Override
-public Void visitCycle_stmt(BabyDuckParser.Cycle_stmtContext ctx) {
-    // 1) Etiqueta de inicio del while
-    String startLabel = qg.newLabel();
-    qg.markLabel(startLabel);
-
-    // 2) Evaluar la condición
-    visit(ctx.expresion());                       // genera el cuadruplo relacional
-    String condTemp = qg.peekOperand();            // recupera el temporal de la condición
-
-    // 3) Prepara etiqueta de salida
-    String endLabel = qg.newLabel();
-    qg.generateGotoF(condTemp, endLabel);         // GOTOF condTemp -> endLabel
-
-    // 4) Cuerpo del bucle
-    visit(ctx.body());
-
-    // 5) Salto incondicional al inicio
-    qg.generateGoto(startLabel);
-
-    // 6) Marca el fin del bucle
-    qg.markLabel(endLabel);
-    return null;
-}
-
-
-    @Override
-    public Void visitAssign_stmt(BabyDuckParser.Assign_stmtContext ctx) {
-        // Validar existencia
+    public Void visitAssign(BabyDuckParser.AssignContext ctx) {
         String id = ctx.ID().getText();
-        boolean exists = dir.getFunction(dir.currentFunction).getVariable(id) != null
-                || dir.getFunction("global").getVariable(id) != null;
-        if (!exists)
-            throw new RuntimeException("Variable no declarada: " + id);
-
-        // Generar cuádruplo de asignación
+        VariableInfo vi = dir.getFunction(dir.currentFunction).getVariable(id);
+        if (vi == null) vi = dir.getFunction("global").getVariable(id);
+        if (vi == null) throw new RuntimeException("Variable no declarada: " + id);
         visit(ctx.expresion());
         qg.generateAssignment(id);
         return null;
     }
 
     @Override
-public Void visitFactor(BabyDuckParser.FactorContext ctx) {
-    // 1) Literal entero
-    if (ctx.CTE_INT() != null) {
-        String text = ctx.CTE_INT().getText();
-        int addr    = vmm.allocConst(text, "int");
-        qg.pushOperandAddress(addr, "int");
+    public Void visitPrint(BabyDuckParser.PrintContext ctx) {
+        for (BabyDuckParser.ExpresionContext e : ctx.expresion()) {
+            visit(e);
+            qg.generatePrint();
+        }
+        for (TerminalNode s : ctx.CTE_STRING()) {
+            qg.generatePrintString(s.getText());
+        }
         return null;
     }
-    // 2) Literal float
-    if (ctx.CTE_FLOAT() != null) {
-        String text = ctx.CTE_FLOAT().getText();
-        int addr    = vmm.allocConst(text, "float");
-        qg.pushOperandAddress(addr, "float");
-        return null;
-    }
-    // 3) Literal string
-    if (ctx.CTE_STRING() != null) {
-        String text = ctx.CTE_STRING().getText();
-        // si quieres asignar direcciones a strings, hazlo aquí
-        qg.pushOperand(text, "string");
-        return null;
-    }
-    // 4) Identificador
-    if (ctx.ID() != null) {
-        String id = ctx.ID().getText();
-        // Validación de existencia
-        boolean exists = dir.getFunction(dir.currentFunction).getVariable(id) != null
-                      || dir.getFunction("global").getVariable(id) != null;
-        if (!exists) throw new RuntimeException("Variable no declarada: " + id);
-        // Recuperar su dirección
-        VariableInfo info = dir.getFunction(dir.currentFunction).getVariable(id);
-        if (info == null) info = dir.getFunction("global").getVariable(id);
-        int addr = info.address;
-        qg.pushOperandAddress(addr, info.type);
-        return null;
-    }
-    // 5) Subexpresión entre paréntesis
-    if (ctx.LPAREN() != null) {
+
+    @Override
+    public Void visitCondition(BabyDuckParser.ConditionContext ctx) {
         visit(ctx.expresion());
-    }
-    return null;
-}
-
-
-    @Override
-    public Void visitExp(BabyDuckParser.ExpContext ctx) {
-        visit(ctx.termino());
-        visit(ctx.exp_tail());
-        return null;
-    }
-
-    @Override
-    public Void visitExp_tail(BabyDuckParser.Exp_tailContext ctx) {
-        if (ctx.PLUS()  != null) qg.pushOperator("+");
-        if (ctx.MINUS() != null) qg.pushOperator("-");
-        if (ctx.termino() != null) {
-            visit(ctx.termino());
-            qg.generateBinaryQuad();
-            visit(ctx.exp_tail());
+        String cond = qg.peekOperand();
+        String Lf   = qg.newLabel();
+        qg.generateGotoF(cond, Lf);
+        visit(ctx.body(0));
+        if (ctx.ELSE() != null) {
+            String Le = qg.newLabel();
+            qg.generateGoto(Le);
+            qg.markLabel(Lf);
+            visit(ctx.body(1));
+            qg.markLabel(Le);
+        } else {
+            qg.markLabel(Lf);
         }
         return null;
     }
 
     @Override
-    public Void visitTermino(BabyDuckParser.TerminoContext ctx) {
-        visit(ctx.factor());
-        visit(ctx.termino_tail());
+    public Void visitCycle(BabyDuckParser.CycleContext ctx) {
+        String start = qg.newLabel();
+        qg.markLabel(start);
+        visit(ctx.expresion());
+        String cond = qg.peekOperand();
+        String end   = qg.newLabel();
+        qg.generateGotoF(cond, end);
+        visit(ctx.body());
+        qg.generateGoto(start);
+        qg.markLabel(end);
         return null;
     }
 
     @Override
-    public Void visitTermino_tail(BabyDuckParser.Termino_tailContext ctx) {
-        if (ctx.TIMES()   != null) qg.pushOperator("*");
-        if (ctx.DIVIDED() != null) qg.pushOperator("/");
-        if (ctx.factor() != null) {
-            visit(ctx.factor());
-            qg.generateBinaryQuad();
-            visit(ctx.termino_tail());
+    public Void visitF_call(BabyDuckParser.F_callContext ctx) {
+        String fname = ctx.ID().getText();
+        // Preparar ERA
+        qg.generateERA(fname);
+        if (ctx.expresion() != null) {
+            for (BabyDuckParser.ExpresionContext e : ctx.expresion()) {
+                visit(e);
+                qg.generateParam();
+            }
         }
+        // Generar llamada
+        qg.generateGOSUB(fname);
         return null;
     }
 
@@ -213,14 +159,44 @@ public Void visitFactor(BabyDuckParser.FactorContext ctx) {
     }
 
     @Override
-    public Void visitPrint_stmt(BabyDuckParser.Print_stmtContext ctx) {
-        visit(ctx.expresion());
-        qg.generatePrint();
-        if (ctx.print_list() != null) {
-            for (BabyDuckParser.ExpresionContext e : ctx.print_list().expresion()) {
-                visit(e);
-                qg.generatePrint();
-            }
+    public Void visitExp(BabyDuckParser.ExpContext ctx) {
+        visit(ctx.termino(0));
+        for (int i = 1; i < ctx.termino().size(); i++) {
+            String op = ctx.getChild(2*i-1).getText();
+            qg.pushOperator(op);
+            visit(ctx.termino(i));
+            qg.generateBinaryQuad();
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitTermino(BabyDuckParser.TerminoContext ctx) {
+        visit(ctx.factor(0));
+        for (int i = 1; i < ctx.factor().size(); i++) {
+            String op = ctx.getChild(2*i-1).getText();
+            qg.pushOperator(op);
+            visit(ctx.factor(i));
+            qg.generateBinaryQuad();
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitFactor(BabyDuckParser.FactorContext ctx) {
+        if (ctx.LPAREN() != null) {
+            visit(ctx.expresion());
+        } else if (ctx.cte() != null) {
+            String val = ctx.cte().getText();
+            String ty  = ctx.cte().CTE_INT() != null ? "int" : "float";
+            int addr   = vmm.allocConst(val, ty);
+            qg.pushOperandAddress(addr, ty);
+        } else {
+            String id = ctx.ID().getText();
+            VariableInfo vi = dir.getFunction(dir.currentFunction).getVariable(id);
+            if (vi == null) vi = dir.getFunction("global").getVariable(id);
+            if (vi == null) throw new RuntimeException("Variable no declarada: " + id);
+            qg.pushOperandAddress(vi.address, vi.type);
         }
         return null;
     }

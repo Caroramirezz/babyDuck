@@ -22,11 +22,11 @@ public interface BabyDuckVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVars(BabyDuckParser.VarsContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BabyDuckParser#listaIds}.
+	 * Visit a parse tree produced by {@link BabyDuckParser#idList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitListaIds(BabyDuckParser.ListaIdsContext ctx);
+	T visitIdList(BabyDuckParser.IdListContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link BabyDuckParser#type}.
 	 * @param ctx the parse tree
@@ -40,17 +40,17 @@ public interface BabyDuckVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFuncs(BabyDuckParser.FuncsContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link BabyDuckParser#paramList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParamList(BabyDuckParser.ParamListContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link BabyDuckParser#body}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitBody(BabyDuckParser.BodyContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BabyDuckParser#statement_list}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStatement_list(BabyDuckParser.Statement_listContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link BabyDuckParser#statement}.
 	 * @param ctx the parse tree
@@ -58,35 +58,35 @@ public interface BabyDuckVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStatement(BabyDuckParser.StatementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BabyDuckParser#assign_stmt}.
+	 * Visit a parse tree produced by {@link BabyDuckParser#assign}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAssign_stmt(BabyDuckParser.Assign_stmtContext ctx);
+	T visitAssign(BabyDuckParser.AssignContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BabyDuckParser#print_stmt}.
+	 * Visit a parse tree produced by {@link BabyDuckParser#print}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPrint_stmt(BabyDuckParser.Print_stmtContext ctx);
+	T visitPrint(BabyDuckParser.PrintContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BabyDuckParser#print_list}.
+	 * Visit a parse tree produced by {@link BabyDuckParser#condition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPrint_list(BabyDuckParser.Print_listContext ctx);
+	T visitCondition(BabyDuckParser.ConditionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BabyDuckParser#condition_stmt}.
+	 * Visit a parse tree produced by {@link BabyDuckParser#cycle}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCondition_stmt(BabyDuckParser.Condition_stmtContext ctx);
+	T visitCycle(BabyDuckParser.CycleContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BabyDuckParser#cycle_stmt}.
+	 * Visit a parse tree produced by {@link BabyDuckParser#f_call}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCycle_stmt(BabyDuckParser.Cycle_stmtContext ctx);
+	T visitF_call(BabyDuckParser.F_callContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link BabyDuckParser#expresion}.
 	 * @param ctx the parse tree
@@ -106,27 +106,21 @@ public interface BabyDuckVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExp(BabyDuckParser.ExpContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BabyDuckParser#exp_tail}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExp_tail(BabyDuckParser.Exp_tailContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link BabyDuckParser#termino}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitTermino(BabyDuckParser.TerminoContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BabyDuckParser#termino_tail}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTermino_tail(BabyDuckParser.Termino_tailContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link BabyDuckParser#factor}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitFactor(BabyDuckParser.FactorContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BabyDuckParser#cte}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCte(BabyDuckParser.CteContext ctx);
 }

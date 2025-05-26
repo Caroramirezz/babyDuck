@@ -46,37 +46,33 @@ WS          : [ \t\r\n]+ -> skip;
 
 programa         : PROGRAM ID SEMICOLON vars funcs MAIN body END;
 
-vars             : (VAR type ID listaIds SEMICOLON vars)?;
-listaIds         : (COMMA ID)*;
+vars             : (VAR idList COLON type SEMICOLON)*;
+idList           : ID (COMMA ID)*;
 type             : INT | FLOAT;
 
-funcs            : (VOID ID SEMICOLON vars body funcs)?;
+funcs            : ( VOID ID LPAREN paramList? RPAREN vars body SEMICOLON )*;
+paramList        : ID COLON type ( COMMA ID COLON type )*; 
 
-body             : LCURLY statement_list RCURLY;
-statement_list   : (statement)*;
+body             : LCURLY statement* RCURLY;
+statement        : assign|print|condition|cycle|f_call;
 
-statement        : assign_stmt
-                 | condition_stmt
-                 | cycle_stmt
-                 | print_stmt;
+assign           : ID ASSIGN expresion SEMICOLON;
 
-assign_stmt      : ID ASSIGN expresion SEMICOLON;
+print            : PRINT LPAREN ( expresion | CTE_STRING ) ( COMMA ( expresion | CTE_STRING ) )* RPAREN SEMICOLON;
 
-print_stmt       : PRINT LPAREN expresion print_list? RPAREN SEMICOLON;
-print_list       : (COMMA expresion)*;
+condition        : IF LPAREN expresion RPAREN body (ELSE body)?;
 
-condition_stmt   : IF LPAREN expresion RPAREN body (ELSE body)?;
+cycle            : WHILE LPAREN expresion RPAREN DO body;
 
-cycle_stmt       : WHILE LPAREN expresion RPAREN DO body;
+f_call           : ID LPAREN (expresion (COMMA expresion)*)? RPAREN SEMICOLON;
 
 expresion        : exp ( oprel exp )?;
+
 oprel            : NEQ | LTHAN | GTHAN;
 
-exp              : termino exp_tail;
-exp_tail         : (PLUS termino exp_tail)? | (MINUS termino exp_tail)?;
+exp              : termino ((PLUS|MINUS) termino)*;
 
-termino          : factor termino_tail;
-termino_tail     : (TIMES factor termino_tail)? | (DIVIDED factor termino_tail)?;
+termino          : factor ((TIMES|DIVIDED) factor)*;
 
-factor           : LPAREN expresion RPAREN | CTE_INT | CTE_FLOAT | CTE_STRING | ID;
-
+factor           : LPAREN expresion RPAREN | (PLUS|MINUS)? (ID|cte) ;
+cte              : CTE_INT|CTE_FLOAT;

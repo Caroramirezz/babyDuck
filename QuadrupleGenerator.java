@@ -1,115 +1,121 @@
 import java.util.*;
 
 public class QuadrupleGenerator {
-    // Gestión de memoria virtual
     private final VirtualMemoryManager vmm = new VirtualMemoryManager();
-    private int labelCount = 0;
-
-    // Pilas para operandos (stored as String addresses), tipos y operadores
     private final Stack<String> operandStack  = new Stack<>();
     private final Stack<String> typeStack     = new Stack<>();
     private final Stack<String> operatorStack = new Stack<>();
-
-    // Cola FIFO para almacenar los cuádruplos
-    private final Queue<Cuadruplo> quads = new LinkedList<>();
-
-    // Contador para temporales (nombres t0, t1, …)
+    private final Queue<Cuadruplo> quads       = new LinkedList<>();
     private int tempCount = 0;
+    private int labelCount = 0;
 
-    /** Inserta un operando literal o variable (como texto) */
+    /** Push a literal or variable name onto the operand stack. */
     public void pushOperand(String operand, String type) {
         operandStack.push(operand);
         typeStack.push(type);
     }
 
-    /** Inserta un operando dando directamente su dirección virtual */
+    /** Push a virtual address directly onto the operand stack. */
     public void pushOperandAddress(int address, String type) {
         operandStack.push(Integer.toString(address));
         typeStack.push(type);
     }
 
-    /** Inserta un operador (+, -, *, /, <, >, !=) */
+    /** Push an operator onto the operator stack. */
     public void pushOperator(String op) {
         operatorStack.push(op);
     }
 
-    /**
-     * Genera un cuádruplo para la operación binaria
-     * (toma dos operandos y un operador de las pilas).
-     */
+    /** Generate a binary operation quadruple. */
     public void generateBinaryQuad() {
-        // Pop de operandos y tipos
-        String arg2   = operandStack.pop(); String t2 = typeStack.pop();
-        String arg1   = operandStack.pop(); String t1 = typeStack.pop();
-        String op     = operatorStack.pop();
-
-        // Determinar tipo de resultado
+        String arg2 = operandStack.pop(); String t2 = typeStack.pop();
+        String arg1 = operandStack.pop(); String t1 = typeStack.pop();
+        String op   = operatorStack.pop();
         String resType = (t1.equals("float") || t2.equals("float")) ? "float" : "int";
-
-        // Asignar nuevo temporal y su dirección
-        String tempName = "t" + (tempCount++);
-        int    tempAddr = vmm.allocTemp(resType);
-
-        // Empujar dirección y tipo del temporal para cálculos posteriores
+        // Allocate temporary
+        int tempAddr = vmm.allocTemp(resType);
         operandStack.push(Integer.toString(tempAddr));
         typeStack.push(resType);
-
-        // Crear y encolar el cuádruplo
         quads.add(new Cuadruplo(op, arg1, arg2, Integer.toString(tempAddr)));
     }
 
-    /**
-     * Genera un cuádruplo de asignación:
-     *   (=, valor, -, nombreVariable)
-     */
+    /** Generate an assignment quadruple. */
     public void generateAssignment(String varName) {
         String val = operandStack.pop();
         typeStack.pop();
         quads.add(new Cuadruplo("=", val, "-", varName));
     }
 
-    /**
-     * Genera un cuádruplo de PRINT para un solo valor:
-     *   (PRINT, valor, -, -)
-     */
+    /** Generate a PRINT quadruple for numeric expressions. */
     public void generatePrint() {
         String val = operandStack.pop();
         typeStack.pop();
         quads.add(new Cuadruplo("PRINT", val, "-", "-"));
     }
 
-    /** Devuelve la lista de cuádruplos generados */
-    public List<Cuadruplo> getQuadruples() {
-        return new ArrayList<>(quads);
+    /** Generate a PRINT_STR quadruple for string literals. */
+    public void generatePrintString(String text) {
+        quads.add(new Cuadruplo("PRINT_STR", text, "-", "-"));
     }
 
-/** Crea una nueva etiqueta: L0, L1, … */
-    public String newLabel() {
-        return "L" + (labelCount++);
+    /** Generate a PARAM quadruple for function call arguments. */
+    public void generateParam() {
+        String arg = operandStack.pop();
+        typeStack.pop();
+        quads.add(new Cuadruplo("PARAM", arg, "-", "-"));
     }
 
-    /** Marca una etiqueta en la cola de cuádruplos */
-    public void markLabel(String label) {
-        quads.add(new Cuadruplo("LABEL", "-", "-", label));
+    /** Generate an ERA quadruple to prepare a function activation record. */
+    public void generateERA(String funcName) {
+        quads.add(new Cuadruplo("ERA", funcName, "-", "-"));
     }
 
-    /** GOTO incondicional */
+    /** Generate a GOSUB quadruple to jump to the function. */
+    public void generateGOSUB(String funcName) {
+        quads.add(new Cuadruplo("GOSUB", funcName, "-", "-"));
+    }
+
+    /** Generate a LABEL quadruple marking the start of a function. */
+    public void generateFuncBegin(String funcName) {
+        quads.add(new Cuadruplo("LABEL", "-", "-", funcName));
+    }
+
+    /** Generate an ENDPROC quadruple marking the end of a function. */
+    public void generateFuncEnd() {
+        quads.add(new Cuadruplo("ENDPROC", "-", "-", "-"));
+    }
+
+    /** Generate a GOTO quadruple for unconditional jumps. */
     public void generateGoto(String label) {
         quads.add(new Cuadruplo("GOTO", "-", "-", label));
     }
 
-    /** GOTO si la condición es falsa */
-    public void generateGotoF(String conditionTemp, String label) {
-        quads.add(new Cuadruplo("GOTOF", conditionTemp, "-", label));
+    /** Generate a GOTOF quadruple for conditional false jumps. */
+    public void generateGotoF(String condTemp, String label) {
+        quads.add(new Cuadruplo("GOTOF", condTemp, "-", label));
     }
 
-    /** Devuelve el tope actual de operandos (usado para recuperar el temporal con la condición) */
+    /** Create and return a new unique label. */
+    public String newLabel() {
+        return "L" + (labelCount++);
+    }
+
+    /** Mark a position in code with a LABEL quadruple. */
+    public void markLabel(String label) {
+        quads.add(new Cuadruplo("LABEL", "-", "-", label));
+    }
+
+    /** Peek at the top operand without popping it. */
     public String peekOperand() {
         return operandStack.peek();
     }
 
+    /** Retrieve all generated quadruples as a list. */
+    public List<Cuadruplo> getQuadruples() {
+        return new ArrayList<>(quads);
+    }
 
-    /** Imprime en consola todos los cuádruplos encolados */
+    /** Print all generated quadruples to the console. */
     public void printQuadruples() {
         System.out.println("\n--- Cuádruplos Generados ---");
         int i = 0;

@@ -22,17 +22,16 @@ public class BabyDuckParser extends Parser {
 		LCURLY=25, RCURLY=26, NEQ=27, CTE_INT=28, CTE_FLOAT=29, CTE_STRING=30, 
 		ID=31, WS=32;
 	public static final int
-		RULE_programa = 0, RULE_vars = 1, RULE_listaIds = 2, RULE_type = 3, RULE_funcs = 4, 
-		RULE_body = 5, RULE_statement_list = 6, RULE_statement = 7, RULE_assign_stmt = 8, 
-		RULE_print_stmt = 9, RULE_print_list = 10, RULE_condition_stmt = 11, RULE_cycle_stmt = 12, 
-		RULE_expresion = 13, RULE_oprel = 14, RULE_exp = 15, RULE_exp_tail = 16, 
-		RULE_termino = 17, RULE_termino_tail = 18, RULE_factor = 19;
+		RULE_programa = 0, RULE_vars = 1, RULE_idList = 2, RULE_type = 3, RULE_funcs = 4, 
+		RULE_paramList = 5, RULE_body = 6, RULE_statement = 7, RULE_assign = 8, 
+		RULE_print = 9, RULE_condition = 10, RULE_cycle = 11, RULE_f_call = 12, 
+		RULE_expresion = 13, RULE_oprel = 14, RULE_exp = 15, RULE_termino = 16, 
+		RULE_factor = 17, RULE_cte = 18;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"programa", "vars", "listaIds", "type", "funcs", "body", "statement_list", 
-			"statement", "assign_stmt", "print_stmt", "print_list", "condition_stmt", 
-			"cycle_stmt", "expresion", "oprel", "exp", "exp_tail", "termino", "termino_tail", 
-			"factor"
+			"programa", "vars", "idList", "type", "funcs", "paramList", "body", "statement", 
+			"assign", "print", "condition", "cycle", "f_call", "expresion", "oprel", 
+			"exp", "termino", "factor", "cte"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -147,21 +146,21 @@ public class BabyDuckParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(40);
+			setState(38);
 			match(PROGRAM);
-			setState(41);
+			setState(39);
 			match(ID);
-			setState(42);
+			setState(40);
 			match(SEMICOLON);
-			setState(43);
+			setState(41);
 			vars();
-			setState(44);
+			setState(42);
 			funcs();
-			setState(45);
+			setState(43);
 			match(MAIN);
-			setState(46);
+			setState(44);
 			body();
-			setState(47);
+			setState(45);
 			match(END);
 			}
 		}
@@ -178,17 +177,29 @@ public class BabyDuckParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class VarsContext extends ParserRuleContext {
-		public TerminalNode VAR() { return getToken(BabyDuckParser.VAR, 0); }
-		public TypeContext type() {
-			return getRuleContext(TypeContext.class,0);
+		public List<TerminalNode> VAR() { return getTokens(BabyDuckParser.VAR); }
+		public TerminalNode VAR(int i) {
+			return getToken(BabyDuckParser.VAR, i);
 		}
-		public TerminalNode ID() { return getToken(BabyDuckParser.ID, 0); }
-		public ListaIdsContext listaIds() {
-			return getRuleContext(ListaIdsContext.class,0);
+		public List<IdListContext> idList() {
+			return getRuleContexts(IdListContext.class);
 		}
-		public TerminalNode SEMICOLON() { return getToken(BabyDuckParser.SEMICOLON, 0); }
-		public VarsContext vars() {
-			return getRuleContext(VarsContext.class,0);
+		public IdListContext idList(int i) {
+			return getRuleContext(IdListContext.class,i);
+		}
+		public List<TerminalNode> COLON() { return getTokens(BabyDuckParser.COLON); }
+		public TerminalNode COLON(int i) {
+			return getToken(BabyDuckParser.COLON, i);
+		}
+		public List<TypeContext> type() {
+			return getRuleContexts(TypeContext.class);
+		}
+		public TypeContext type(int i) {
+			return getRuleContext(TypeContext.class,i);
+		}
+		public List<TerminalNode> SEMICOLON() { return getTokens(BabyDuckParser.SEMICOLON); }
+		public TerminalNode SEMICOLON(int i) {
+			return getToken(BabyDuckParser.SEMICOLON, i);
 		}
 		public VarsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -216,26 +227,28 @@ public class BabyDuckParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(56);
+			setState(55);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==VAR) {
+			while (_la==VAR) {
 				{
-				setState(49);
+				{
+				setState(47);
 				match(VAR);
+				setState(48);
+				idList();
+				setState(49);
+				match(COLON);
 				setState(50);
 				type();
 				setState(51);
-				match(ID);
-				setState(52);
-				listaIds();
-				setState(53);
 				match(SEMICOLON);
-				setState(54);
-				vars();
 				}
+				}
+				setState(57);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
 			}
-
 			}
 		}
 		catch (RecognitionException re) {
@@ -250,54 +263,56 @@ public class BabyDuckParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class ListaIdsContext extends ParserRuleContext {
-		public List<TerminalNode> COMMA() { return getTokens(BabyDuckParser.COMMA); }
-		public TerminalNode COMMA(int i) {
-			return getToken(BabyDuckParser.COMMA, i);
-		}
+	public static class IdListContext extends ParserRuleContext {
 		public List<TerminalNode> ID() { return getTokens(BabyDuckParser.ID); }
 		public TerminalNode ID(int i) {
 			return getToken(BabyDuckParser.ID, i);
 		}
-		public ListaIdsContext(ParserRuleContext parent, int invokingState) {
+		public List<TerminalNode> COMMA() { return getTokens(BabyDuckParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(BabyDuckParser.COMMA, i);
+		}
+		public IdListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_listaIds; }
+		@Override public int getRuleIndex() { return RULE_idList; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterListaIds(this);
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterIdList(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitListaIds(this);
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitIdList(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitListaIds(this);
+			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitIdList(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ListaIdsContext listaIds() throws RecognitionException {
-		ListaIdsContext _localctx = new ListaIdsContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_listaIds);
+	public final IdListContext idList() throws RecognitionException {
+		IdListContext _localctx = new IdListContext(_ctx, getState());
+		enterRule(_localctx, 4, RULE_idList);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(62);
+			setState(58);
+			match(ID);
+			setState(63);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				setState(58);
-				match(COMMA);
 				setState(59);
+				match(COMMA);
+				setState(60);
 				match(ID);
 				}
 				}
-				setState(64);
+				setState(65);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -344,7 +359,7 @@ public class BabyDuckParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(65);
+			setState(66);
 			_la = _input.LA(1);
 			if ( !(_la==INT || _la==FLOAT) ) {
 			_errHandler.recoverInline(this);
@@ -369,17 +384,43 @@ public class BabyDuckParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class FuncsContext extends ParserRuleContext {
-		public TerminalNode VOID() { return getToken(BabyDuckParser.VOID, 0); }
-		public TerminalNode ID() { return getToken(BabyDuckParser.ID, 0); }
-		public TerminalNode SEMICOLON() { return getToken(BabyDuckParser.SEMICOLON, 0); }
-		public VarsContext vars() {
-			return getRuleContext(VarsContext.class,0);
+		public List<TerminalNode> VOID() { return getTokens(BabyDuckParser.VOID); }
+		public TerminalNode VOID(int i) {
+			return getToken(BabyDuckParser.VOID, i);
 		}
-		public BodyContext body() {
-			return getRuleContext(BodyContext.class,0);
+		public List<TerminalNode> ID() { return getTokens(BabyDuckParser.ID); }
+		public TerminalNode ID(int i) {
+			return getToken(BabyDuckParser.ID, i);
 		}
-		public FuncsContext funcs() {
-			return getRuleContext(FuncsContext.class,0);
+		public List<TerminalNode> LPAREN() { return getTokens(BabyDuckParser.LPAREN); }
+		public TerminalNode LPAREN(int i) {
+			return getToken(BabyDuckParser.LPAREN, i);
+		}
+		public List<TerminalNode> RPAREN() { return getTokens(BabyDuckParser.RPAREN); }
+		public TerminalNode RPAREN(int i) {
+			return getToken(BabyDuckParser.RPAREN, i);
+		}
+		public List<VarsContext> vars() {
+			return getRuleContexts(VarsContext.class);
+		}
+		public VarsContext vars(int i) {
+			return getRuleContext(VarsContext.class,i);
+		}
+		public List<BodyContext> body() {
+			return getRuleContexts(BodyContext.class);
+		}
+		public BodyContext body(int i) {
+			return getRuleContext(BodyContext.class,i);
+		}
+		public List<TerminalNode> SEMICOLON() { return getTokens(BabyDuckParser.SEMICOLON); }
+		public TerminalNode SEMICOLON(int i) {
+			return getToken(BabyDuckParser.SEMICOLON, i);
+		}
+		public List<ParamListContext> paramList() {
+			return getRuleContexts(ParamListContext.class);
+		}
+		public ParamListContext paramList(int i) {
+			return getRuleContext(ParamListContext.class,i);
 		}
 		public FuncsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -407,26 +448,127 @@ public class BabyDuckParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(74);
+			setState(81);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==VOID) {
+			while (_la==VOID) {
 				{
-				setState(67);
-				match(VOID);
+				{
 				setState(68);
-				match(ID);
+				match(VOID);
 				setState(69);
-				match(SEMICOLON);
+				match(ID);
 				setState(70);
-				vars();
-				setState(71);
-				body();
+				match(LPAREN);
 				setState(72);
-				funcs();
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==ID) {
+					{
+					setState(71);
+					paramList();
+					}
 				}
-			}
 
+				setState(74);
+				match(RPAREN);
+				setState(75);
+				vars();
+				setState(76);
+				body();
+				setState(77);
+				match(SEMICOLON);
+				}
+				}
+				setState(83);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	@SuppressWarnings("CheckReturnValue")
+	public static class ParamListContext extends ParserRuleContext {
+		public List<TerminalNode> ID() { return getTokens(BabyDuckParser.ID); }
+		public TerminalNode ID(int i) {
+			return getToken(BabyDuckParser.ID, i);
+		}
+		public List<TerminalNode> COLON() { return getTokens(BabyDuckParser.COLON); }
+		public TerminalNode COLON(int i) {
+			return getToken(BabyDuckParser.COLON, i);
+		}
+		public List<TypeContext> type() {
+			return getRuleContexts(TypeContext.class);
+		}
+		public TypeContext type(int i) {
+			return getRuleContext(TypeContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(BabyDuckParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(BabyDuckParser.COMMA, i);
+		}
+		public ParamListContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_paramList; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterParamList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitParamList(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitParamList(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final ParamListContext paramList() throws RecognitionException {
+		ParamListContext _localctx = new ParamListContext(_ctx, getState());
+		enterRule(_localctx, 10, RULE_paramList);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(84);
+			match(ID);
+			setState(85);
+			match(COLON);
+			setState(86);
+			type();
+			setState(93);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while (_la==COMMA) {
+				{
+				{
+				setState(87);
+				match(COMMA);
+				setState(88);
+				match(ID);
+				setState(89);
+				match(COLON);
+				setState(90);
+				type();
+				}
+				}
+				setState(95);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -443,10 +585,13 @@ public class BabyDuckParser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class BodyContext extends ParserRuleContext {
 		public TerminalNode LCURLY() { return getToken(BabyDuckParser.LCURLY, 0); }
-		public Statement_listContext statement_list() {
-			return getRuleContext(Statement_listContext.class,0);
-		}
 		public TerminalNode RCURLY() { return getToken(BabyDuckParser.RCURLY, 0); }
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
+		}
+		public StatementContext statement(int i) {
+			return getRuleContext(StatementContext.class,i);
+		}
 		public BodyContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -468,15 +613,28 @@ public class BabyDuckParser extends Parser {
 
 	public final BodyContext body() throws RecognitionException {
 		BodyContext _localctx = new BodyContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_body);
+		enterRule(_localctx, 12, RULE_body);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(76);
+			setState(96);
 			match(LCURLY);
-			setState(77);
-			statement_list();
-			setState(78);
+			setState(100);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 2147485056L) != 0)) {
+				{
+				{
+				setState(97);
+				statement();
+				}
+				}
+				setState(102);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			setState(103);
 			match(RCURLY);
 			}
 		}
@@ -492,79 +650,21 @@ public class BabyDuckParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Statement_listContext extends ParserRuleContext {
-		public List<StatementContext> statement() {
-			return getRuleContexts(StatementContext.class);
-		}
-		public StatementContext statement(int i) {
-			return getRuleContext(StatementContext.class,i);
-		}
-		public Statement_listContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_statement_list; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterStatement_list(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitStatement_list(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitStatement_list(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final Statement_listContext statement_list() throws RecognitionException {
-		Statement_listContext _localctx = new Statement_listContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_statement_list);
-		int _la;
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(83);
-			_errHandler.sync(this);
-			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 2147485056L) != 0)) {
-				{
-				{
-				setState(80);
-				statement();
-				}
-				}
-				setState(85);
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-			}
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	@SuppressWarnings("CheckReturnValue")
 	public static class StatementContext extends ParserRuleContext {
-		public Assign_stmtContext assign_stmt() {
-			return getRuleContext(Assign_stmtContext.class,0);
+		public AssignContext assign() {
+			return getRuleContext(AssignContext.class,0);
 		}
-		public Condition_stmtContext condition_stmt() {
-			return getRuleContext(Condition_stmtContext.class,0);
+		public PrintContext print() {
+			return getRuleContext(PrintContext.class,0);
 		}
-		public Cycle_stmtContext cycle_stmt() {
-			return getRuleContext(Cycle_stmtContext.class,0);
+		public ConditionContext condition() {
+			return getRuleContext(ConditionContext.class,0);
 		}
-		public Print_stmtContext print_stmt() {
-			return getRuleContext(Print_stmtContext.class,0);
+		public CycleContext cycle() {
+			return getRuleContext(CycleContext.class,0);
+		}
+		public F_callContext f_call() {
+			return getRuleContext(F_callContext.class,0);
 		}
 		public StatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -589,39 +689,44 @@ public class BabyDuckParser extends Parser {
 		StatementContext _localctx = new StatementContext(_ctx, getState());
 		enterRule(_localctx, 14, RULE_statement);
 		try {
-			setState(90);
+			setState(110);
 			_errHandler.sync(this);
-			switch (_input.LA(1)) {
-			case ID:
+			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
+			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(86);
-				assign_stmt();
+				setState(105);
+				assign();
 				}
 				break;
-			case IF:
+			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(87);
-				condition_stmt();
+				setState(106);
+				print();
 				}
 				break;
-			case WHILE:
+			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(88);
-				cycle_stmt();
+				setState(107);
+				condition();
 				}
 				break;
-			case PRINT:
+			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(89);
-				print_stmt();
+				setState(108);
+				cycle();
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
+			case 5:
+				enterOuterAlt(_localctx, 5);
+				{
+				setState(109);
+				f_call();
+				}
+				break;
 			}
 		}
 		catch (RecognitionException re) {
@@ -636,45 +741,45 @@ public class BabyDuckParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Assign_stmtContext extends ParserRuleContext {
+	public static class AssignContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(BabyDuckParser.ID, 0); }
 		public TerminalNode ASSIGN() { return getToken(BabyDuckParser.ASSIGN, 0); }
 		public ExpresionContext expresion() {
 			return getRuleContext(ExpresionContext.class,0);
 		}
 		public TerminalNode SEMICOLON() { return getToken(BabyDuckParser.SEMICOLON, 0); }
-		public Assign_stmtContext(ParserRuleContext parent, int invokingState) {
+		public AssignContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_assign_stmt; }
+		@Override public int getRuleIndex() { return RULE_assign; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterAssign_stmt(this);
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterAssign(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitAssign_stmt(this);
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitAssign(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitAssign_stmt(this);
+			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitAssign(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Assign_stmtContext assign_stmt() throws RecognitionException {
-		Assign_stmtContext _localctx = new Assign_stmtContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_assign_stmt);
+	public final AssignContext assign() throws RecognitionException {
+		AssignContext _localctx = new AssignContext(_ctx, getState());
+		enterRule(_localctx, 16, RULE_assign);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(92);
+			setState(112);
 			match(ID);
-			setState(93);
+			setState(113);
 			match(ASSIGN);
-			setState(94);
+			setState(114);
 			expresion();
-			setState(95);
+			setState(115);
 			match(SEMICOLON);
 			}
 		}
@@ -690,129 +795,119 @@ public class BabyDuckParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Print_stmtContext extends ParserRuleContext {
+	public static class PrintContext extends ParserRuleContext {
 		public TerminalNode PRINT() { return getToken(BabyDuckParser.PRINT, 0); }
 		public TerminalNode LPAREN() { return getToken(BabyDuckParser.LPAREN, 0); }
-		public ExpresionContext expresion() {
-			return getRuleContext(ExpresionContext.class,0);
-		}
 		public TerminalNode RPAREN() { return getToken(BabyDuckParser.RPAREN, 0); }
 		public TerminalNode SEMICOLON() { return getToken(BabyDuckParser.SEMICOLON, 0); }
-		public Print_listContext print_list() {
-			return getRuleContext(Print_listContext.class,0);
-		}
-		public Print_stmtContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_print_stmt; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterPrint_stmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitPrint_stmt(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitPrint_stmt(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final Print_stmtContext print_stmt() throws RecognitionException {
-		Print_stmtContext _localctx = new Print_stmtContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_print_stmt);
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(97);
-			match(PRINT);
-			setState(98);
-			match(LPAREN);
-			setState(99);
-			expresion();
-			setState(101);
-			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
-			case 1:
-				{
-				setState(100);
-				print_list();
-				}
-				break;
-			}
-			setState(103);
-			match(RPAREN);
-			setState(104);
-			match(SEMICOLON);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	@SuppressWarnings("CheckReturnValue")
-	public static class Print_listContext extends ParserRuleContext {
-		public List<TerminalNode> COMMA() { return getTokens(BabyDuckParser.COMMA); }
-		public TerminalNode COMMA(int i) {
-			return getToken(BabyDuckParser.COMMA, i);
-		}
 		public List<ExpresionContext> expresion() {
 			return getRuleContexts(ExpresionContext.class);
 		}
 		public ExpresionContext expresion(int i) {
 			return getRuleContext(ExpresionContext.class,i);
 		}
-		public Print_listContext(ParserRuleContext parent, int invokingState) {
+		public List<TerminalNode> CTE_STRING() { return getTokens(BabyDuckParser.CTE_STRING); }
+		public TerminalNode CTE_STRING(int i) {
+			return getToken(BabyDuckParser.CTE_STRING, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(BabyDuckParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(BabyDuckParser.COMMA, i);
+		}
+		public PrintContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_print_list; }
+		@Override public int getRuleIndex() { return RULE_print; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterPrint_list(this);
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterPrint(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitPrint_list(this);
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitPrint(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitPrint_list(this);
+			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitPrint(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Print_listContext print_list() throws RecognitionException {
-		Print_listContext _localctx = new Print_listContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_print_list);
+	public final PrintContext print() throws RecognitionException {
+		PrintContext _localctx = new PrintContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_print);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(110);
+			setState(117);
+			match(PRINT);
+			setState(118);
+			match(LPAREN);
+			setState(121);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case PLUS:
+			case MINUS:
+			case LPAREN:
+			case CTE_INT:
+			case CTE_FLOAT:
+			case ID:
+				{
+				setState(119);
+				expresion();
+				}
+				break;
+			case CTE_STRING:
+				{
+				setState(120);
+				match(CTE_STRING);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+			setState(130);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				setState(106);
+				setState(123);
 				match(COMMA);
-				setState(107);
-				expresion();
+				setState(126);
+				_errHandler.sync(this);
+				switch (_input.LA(1)) {
+				case PLUS:
+				case MINUS:
+				case LPAREN:
+				case CTE_INT:
+				case CTE_FLOAT:
+				case ID:
+					{
+					setState(124);
+					expresion();
+					}
+					break;
+				case CTE_STRING:
+					{
+					setState(125);
+					match(CTE_STRING);
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
 				}
 				}
-				setState(112);
+				}
+				setState(132);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
+			setState(133);
+			match(RPAREN);
+			setState(134);
+			match(SEMICOLON);
 			}
 		}
 		catch (RecognitionException re) {
@@ -827,7 +922,7 @@ public class BabyDuckParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Condition_stmtContext extends ParserRuleContext {
+	public static class ConditionContext extends ParserRuleContext {
 		public TerminalNode IF() { return getToken(BabyDuckParser.IF, 0); }
 		public TerminalNode LPAREN() { return getToken(BabyDuckParser.LPAREN, 0); }
 		public ExpresionContext expresion() {
@@ -841,50 +936,50 @@ public class BabyDuckParser extends Parser {
 			return getRuleContext(BodyContext.class,i);
 		}
 		public TerminalNode ELSE() { return getToken(BabyDuckParser.ELSE, 0); }
-		public Condition_stmtContext(ParserRuleContext parent, int invokingState) {
+		public ConditionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_condition_stmt; }
+		@Override public int getRuleIndex() { return RULE_condition; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterCondition_stmt(this);
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterCondition(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitCondition_stmt(this);
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitCondition(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitCondition_stmt(this);
+			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitCondition(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Condition_stmtContext condition_stmt() throws RecognitionException {
-		Condition_stmtContext _localctx = new Condition_stmtContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_condition_stmt);
+	public final ConditionContext condition() throws RecognitionException {
+		ConditionContext _localctx = new ConditionContext(_ctx, getState());
+		enterRule(_localctx, 20, RULE_condition);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(113);
+			setState(136);
 			match(IF);
-			setState(114);
+			setState(137);
 			match(LPAREN);
-			setState(115);
+			setState(138);
 			expresion();
-			setState(116);
+			setState(139);
 			match(RPAREN);
-			setState(117);
+			setState(140);
 			body();
-			setState(120);
+			setState(143);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==ELSE) {
 				{
-				setState(118);
+				setState(141);
 				match(ELSE);
-				setState(119);
+				setState(142);
 				body();
 				}
 			}
@@ -903,7 +998,7 @@ public class BabyDuckParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Cycle_stmtContext extends ParserRuleContext {
+	public static class CycleContext extends ParserRuleContext {
 		public TerminalNode WHILE() { return getToken(BabyDuckParser.WHILE, 0); }
 		public TerminalNode LPAREN() { return getToken(BabyDuckParser.LPAREN, 0); }
 		public ExpresionContext expresion() {
@@ -914,43 +1009,132 @@ public class BabyDuckParser extends Parser {
 		public BodyContext body() {
 			return getRuleContext(BodyContext.class,0);
 		}
-		public Cycle_stmtContext(ParserRuleContext parent, int invokingState) {
+		public CycleContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_cycle_stmt; }
+		@Override public int getRuleIndex() { return RULE_cycle; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterCycle_stmt(this);
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterCycle(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitCycle_stmt(this);
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitCycle(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitCycle_stmt(this);
+			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitCycle(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Cycle_stmtContext cycle_stmt() throws RecognitionException {
-		Cycle_stmtContext _localctx = new Cycle_stmtContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_cycle_stmt);
+	public final CycleContext cycle() throws RecognitionException {
+		CycleContext _localctx = new CycleContext(_ctx, getState());
+		enterRule(_localctx, 22, RULE_cycle);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(122);
+			setState(145);
 			match(WHILE);
-			setState(123);
+			setState(146);
 			match(LPAREN);
-			setState(124);
+			setState(147);
 			expresion();
-			setState(125);
+			setState(148);
 			match(RPAREN);
-			setState(126);
+			setState(149);
 			match(DO);
-			setState(127);
+			setState(150);
 			body();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	@SuppressWarnings("CheckReturnValue")
+	public static class F_callContext extends ParserRuleContext {
+		public TerminalNode ID() { return getToken(BabyDuckParser.ID, 0); }
+		public TerminalNode LPAREN() { return getToken(BabyDuckParser.LPAREN, 0); }
+		public TerminalNode RPAREN() { return getToken(BabyDuckParser.RPAREN, 0); }
+		public TerminalNode SEMICOLON() { return getToken(BabyDuckParser.SEMICOLON, 0); }
+		public List<ExpresionContext> expresion() {
+			return getRuleContexts(ExpresionContext.class);
+		}
+		public ExpresionContext expresion(int i) {
+			return getRuleContext(ExpresionContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(BabyDuckParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(BabyDuckParser.COMMA, i);
+		}
+		public F_callContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_f_call; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterF_call(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitF_call(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitF_call(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final F_callContext f_call() throws RecognitionException {
+		F_callContext _localctx = new F_callContext(_ctx, getState());
+		enterRule(_localctx, 24, RULE_f_call);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(152);
+			match(ID);
+			setState(153);
+			match(LPAREN);
+			setState(162);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 2961227776L) != 0)) {
+				{
+				setState(154);
+				expresion();
+				setState(159);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				while (_la==COMMA) {
+					{
+					{
+					setState(155);
+					match(COMMA);
+					setState(156);
+					expresion();
+					}
+					}
+					setState(161);
+					_errHandler.sync(this);
+					_la = _input.LA(1);
+				}
+				}
+			}
+
+			setState(164);
+			match(RPAREN);
+			setState(165);
+			match(SEMICOLON);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1001,16 +1185,16 @@ public class BabyDuckParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(129);
+			setState(167);
 			exp();
-			setState(133);
+			setState(171);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 140509184L) != 0)) {
 				{
-				setState(130);
+				setState(168);
 				oprel();
-				setState(131);
+				setState(169);
 				exp();
 				}
 			}
@@ -1059,7 +1243,7 @@ public class BabyDuckParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(135);
+			setState(173);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 140509184L) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -1084,11 +1268,19 @@ public class BabyDuckParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ExpContext extends ParserRuleContext {
-		public TerminoContext termino() {
-			return getRuleContext(TerminoContext.class,0);
+		public List<TerminoContext> termino() {
+			return getRuleContexts(TerminoContext.class);
 		}
-		public Exp_tailContext exp_tail() {
-			return getRuleContext(Exp_tailContext.class,0);
+		public TerminoContext termino(int i) {
+			return getRuleContext(TerminoContext.class,i);
+		}
+		public List<TerminalNode> PLUS() { return getTokens(BabyDuckParser.PLUS); }
+		public TerminalNode PLUS(int i) {
+			return getToken(BabyDuckParser.PLUS, i);
+		}
+		public List<TerminalNode> MINUS() { return getTokens(BabyDuckParser.MINUS); }
+		public TerminalNode MINUS(int i) {
+			return getToken(BabyDuckParser.MINUS, i);
 		}
 		public ExpContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1112,101 +1304,36 @@ public class BabyDuckParser extends Parser {
 	public final ExpContext exp() throws RecognitionException {
 		ExpContext _localctx = new ExpContext(_ctx, getState());
 		enterRule(_localctx, 30, RULE_exp);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(137);
+			setState(175);
 			termino();
-			setState(138);
-			exp_tail();
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	@SuppressWarnings("CheckReturnValue")
-	public static class Exp_tailContext extends ParserRuleContext {
-		public TerminalNode PLUS() { return getToken(BabyDuckParser.PLUS, 0); }
-		public TerminoContext termino() {
-			return getRuleContext(TerminoContext.class,0);
-		}
-		public Exp_tailContext exp_tail() {
-			return getRuleContext(Exp_tailContext.class,0);
-		}
-		public TerminalNode MINUS() { return getToken(BabyDuckParser.MINUS, 0); }
-		public Exp_tailContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_exp_tail; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterExp_tail(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitExp_tail(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitExp_tail(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final Exp_tailContext exp_tail() throws RecognitionException {
-		Exp_tailContext _localctx = new Exp_tailContext(_ctx, getState());
-		enterRule(_localctx, 32, RULE_exp_tail);
-		int _la;
-		try {
-			setState(152);
+			setState(180);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,11,_ctx) ) {
-			case 1:
-				enterOuterAlt(_localctx, 1);
+			_la = _input.LA(1);
+			while (_la==PLUS || _la==MINUS) {
 				{
-				setState(144);
+				{
+				setState(176);
+				_la = _input.LA(1);
+				if ( !(_la==PLUS || _la==MINUS) ) {
+				_errHandler.recoverInline(this);
+				}
+				else {
+					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+					_errHandler.reportMatch(this);
+					consume();
+				}
+				setState(177);
+				termino();
+				}
+				}
+				setState(182);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if (_la==PLUS) {
-					{
-					setState(140);
-					match(PLUS);
-					setState(141);
-					termino();
-					setState(142);
-					exp_tail();
-					}
-				}
-
-				}
-				break;
-			case 2:
-				enterOuterAlt(_localctx, 2);
-				{
-				setState(150);
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-				if (_la==MINUS) {
-					{
-					setState(146);
-					match(MINUS);
-					setState(147);
-					termino();
-					setState(148);
-					exp_tail();
-					}
-				}
-
-				}
-				break;
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -1222,11 +1349,19 @@ public class BabyDuckParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class TerminoContext extends ParserRuleContext {
-		public FactorContext factor() {
-			return getRuleContext(FactorContext.class,0);
+		public List<FactorContext> factor() {
+			return getRuleContexts(FactorContext.class);
 		}
-		public Termino_tailContext termino_tail() {
-			return getRuleContext(Termino_tailContext.class,0);
+		public FactorContext factor(int i) {
+			return getRuleContext(FactorContext.class,i);
+		}
+		public List<TerminalNode> TIMES() { return getTokens(BabyDuckParser.TIMES); }
+		public TerminalNode TIMES(int i) {
+			return getToken(BabyDuckParser.TIMES, i);
+		}
+		public List<TerminalNode> DIVIDED() { return getTokens(BabyDuckParser.DIVIDED); }
+		public TerminalNode DIVIDED(int i) {
+			return getToken(BabyDuckParser.DIVIDED, i);
 		}
 		public TerminoContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1249,102 +1384,37 @@ public class BabyDuckParser extends Parser {
 
 	public final TerminoContext termino() throws RecognitionException {
 		TerminoContext _localctx = new TerminoContext(_ctx, getState());
-		enterRule(_localctx, 34, RULE_termino);
+		enterRule(_localctx, 32, RULE_termino);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(154);
+			setState(183);
 			factor();
-			setState(155);
-			termino_tail();
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	@SuppressWarnings("CheckReturnValue")
-	public static class Termino_tailContext extends ParserRuleContext {
-		public TerminalNode TIMES() { return getToken(BabyDuckParser.TIMES, 0); }
-		public FactorContext factor() {
-			return getRuleContext(FactorContext.class,0);
-		}
-		public Termino_tailContext termino_tail() {
-			return getRuleContext(Termino_tailContext.class,0);
-		}
-		public TerminalNode DIVIDED() { return getToken(BabyDuckParser.DIVIDED, 0); }
-		public Termino_tailContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_termino_tail; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterTermino_tail(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitTermino_tail(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitTermino_tail(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final Termino_tailContext termino_tail() throws RecognitionException {
-		Termino_tailContext _localctx = new Termino_tailContext(_ctx, getState());
-		enterRule(_localctx, 36, RULE_termino_tail);
-		int _la;
-		try {
-			setState(169);
+			setState(188);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,14,_ctx) ) {
-			case 1:
-				enterOuterAlt(_localctx, 1);
+			_la = _input.LA(1);
+			while (_la==TIMES || _la==DIVIDED) {
 				{
-				setState(161);
+				{
+				setState(184);
+				_la = _input.LA(1);
+				if ( !(_la==TIMES || _la==DIVIDED) ) {
+				_errHandler.recoverInline(this);
+				}
+				else {
+					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+					_errHandler.reportMatch(this);
+					consume();
+				}
+				setState(185);
+				factor();
+				}
+				}
+				setState(190);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if (_la==TIMES) {
-					{
-					setState(157);
-					match(TIMES);
-					setState(158);
-					factor();
-					setState(159);
-					termino_tail();
-					}
-				}
-
-				}
-				break;
-			case 2:
-				enterOuterAlt(_localctx, 2);
-				{
-				setState(167);
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-				if (_la==DIVIDED) {
-					{
-					setState(163);
-					match(DIVIDED);
-					setState(164);
-					factor();
-					setState(165);
-					termino_tail();
-					}
-				}
-
-				}
-				break;
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -1365,10 +1435,12 @@ public class BabyDuckParser extends Parser {
 			return getRuleContext(ExpresionContext.class,0);
 		}
 		public TerminalNode RPAREN() { return getToken(BabyDuckParser.RPAREN, 0); }
-		public TerminalNode CTE_INT() { return getToken(BabyDuckParser.CTE_INT, 0); }
-		public TerminalNode CTE_FLOAT() { return getToken(BabyDuckParser.CTE_FLOAT, 0); }
-		public TerminalNode CTE_STRING() { return getToken(BabyDuckParser.CTE_STRING, 0); }
 		public TerminalNode ID() { return getToken(BabyDuckParser.ID, 0); }
+		public CteContext cte() {
+			return getRuleContext(CteContext.class,0);
+		}
+		public TerminalNode PLUS() { return getToken(BabyDuckParser.PLUS, 0); }
+		public TerminalNode MINUS() { return getToken(BabyDuckParser.MINUS, 0); }
 		public FactorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1390,48 +1462,67 @@ public class BabyDuckParser extends Parser {
 
 	public final FactorContext factor() throws RecognitionException {
 		FactorContext _localctx = new FactorContext(_ctx, getState());
-		enterRule(_localctx, 38, RULE_factor);
+		enterRule(_localctx, 34, RULE_factor);
+		int _la;
 		try {
-			setState(179);
+			setState(202);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case LPAREN:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(171);
+				setState(191);
 				match(LPAREN);
-				setState(172);
+				setState(192);
 				expresion();
-				setState(173);
+				setState(193);
 				match(RPAREN);
 				}
 				break;
+			case PLUS:
+			case MINUS:
 			case CTE_INT:
+			case CTE_FLOAT:
+			case ID:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(175);
-				match(CTE_INT);
+				setState(196);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==PLUS || _la==MINUS) {
+					{
+					setState(195);
+					_la = _input.LA(1);
+					if ( !(_la==PLUS || _la==MINUS) ) {
+					_errHandler.recoverInline(this);
+					}
+					else {
+						if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+						_errHandler.reportMatch(this);
+						consume();
+					}
+					}
 				}
-				break;
-			case CTE_FLOAT:
-				enterOuterAlt(_localctx, 3);
-				{
-				setState(176);
-				match(CTE_FLOAT);
+
+				setState(200);
+				_errHandler.sync(this);
+				switch (_input.LA(1)) {
+				case ID:
+					{
+					setState(198);
+					match(ID);
+					}
+					break;
+				case CTE_INT:
+				case CTE_FLOAT:
+					{
+					setState(199);
+					cte();
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
 				}
-				break;
-			case CTE_STRING:
-				enterOuterAlt(_localctx, 4);
-				{
-				setState(177);
-				match(CTE_STRING);
-				}
-				break;
-			case ID:
-				enterOuterAlt(_localctx, 5);
-				{
-				setState(178);
-				match(ID);
 				}
 				break;
 			default:
@@ -1449,113 +1540,183 @@ public class BabyDuckParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
+	public static class CteContext extends ParserRuleContext {
+		public TerminalNode CTE_INT() { return getToken(BabyDuckParser.CTE_INT, 0); }
+		public TerminalNode CTE_FLOAT() { return getToken(BabyDuckParser.CTE_FLOAT, 0); }
+		public CteContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_cte; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).enterCte(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BabyDuckListener ) ((BabyDuckListener)listener).exitCte(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BabyDuckVisitor ) return ((BabyDuckVisitor<? extends T>)visitor).visitCte(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final CteContext cte() throws RecognitionException {
+		CteContext _localctx = new CteContext(_ctx, getState());
+		enterRule(_localctx, 36, RULE_cte);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(204);
+			_la = _input.LA(1);
+			if ( !(_la==CTE_INT || _la==CTE_FLOAT) ) {
+			_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
 	public static final String _serializedATN =
-		"\u0004\u0001 \u00b6\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u0001 \u00cf\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0002"+
 		"\f\u0007\f\u0002\r\u0007\r\u0002\u000e\u0007\u000e\u0002\u000f\u0007\u000f"+
 		"\u0002\u0010\u0007\u0010\u0002\u0011\u0007\u0011\u0002\u0012\u0007\u0012"+
-		"\u0002\u0013\u0007\u0013\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0000"+
-		"\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0001"+
-		"\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001"+
-		"\u0003\u00019\b\u0001\u0001\u0002\u0001\u0002\u0005\u0002=\b\u0002\n\u0002"+
-		"\f\u0002@\t\u0002\u0001\u0003\u0001\u0003\u0001\u0004\u0001\u0004\u0001"+
-		"\u0004\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0004\u0003\u0004K\b"+
-		"\u0004\u0001\u0005\u0001\u0005\u0001\u0005\u0001\u0005\u0001\u0006\u0005"+
-		"\u0006R\b\u0006\n\u0006\f\u0006U\t\u0006\u0001\u0007\u0001\u0007\u0001"+
-		"\u0007\u0001\u0007\u0003\u0007[\b\u0007\u0001\b\u0001\b\u0001\b\u0001"+
-		"\b\u0001\b\u0001\t\u0001\t\u0001\t\u0001\t\u0003\tf\b\t\u0001\t\u0001"+
-		"\t\u0001\t\u0001\n\u0001\n\u0005\nm\b\n\n\n\f\np\t\n\u0001\u000b\u0001"+
-		"\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0003"+
-		"\u000by\b\u000b\u0001\f\u0001\f\u0001\f\u0001\f\u0001\f\u0001\f\u0001"+
-		"\f\u0001\r\u0001\r\u0001\r\u0001\r\u0003\r\u0086\b\r\u0001\u000e\u0001"+
-		"\u000e\u0001\u000f\u0001\u000f\u0001\u000f\u0001\u0010\u0001\u0010\u0001"+
-		"\u0010\u0001\u0010\u0003\u0010\u0091\b\u0010\u0001\u0010\u0001\u0010\u0001"+
-		"\u0010\u0001\u0010\u0003\u0010\u0097\b\u0010\u0003\u0010\u0099\b\u0010"+
-		"\u0001\u0011\u0001\u0011\u0001\u0011\u0001\u0012\u0001\u0012\u0001\u0012"+
-		"\u0001\u0012\u0003\u0012\u00a2\b\u0012\u0001\u0012\u0001\u0012\u0001\u0012"+
-		"\u0001\u0012\u0003\u0012\u00a8\b\u0012\u0003\u0012\u00aa\b\u0012\u0001"+
-		"\u0013\u0001\u0013\u0001\u0013\u0001\u0013\u0001\u0013\u0001\u0013\u0001"+
-		"\u0013\u0001\u0013\u0003\u0013\u00b4\b\u0013\u0001\u0013\u0000\u0000\u0014"+
-		"\u0000\u0002\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016\u0018\u001a"+
-		"\u001c\u001e \"$&\u0000\u0002\u0001\u0000\u0005\u0006\u0002\u0000\u0015"+
-		"\u0016\u001b\u001b\u00b6\u0000(\u0001\u0000\u0000\u0000\u00028\u0001\u0000"+
-		"\u0000\u0000\u0004>\u0001\u0000\u0000\u0000\u0006A\u0001\u0000\u0000\u0000"+
-		"\bJ\u0001\u0000\u0000\u0000\nL\u0001\u0000\u0000\u0000\fS\u0001\u0000"+
-		"\u0000\u0000\u000eZ\u0001\u0000\u0000\u0000\u0010\\\u0001\u0000\u0000"+
-		"\u0000\u0012a\u0001\u0000\u0000\u0000\u0014n\u0001\u0000\u0000\u0000\u0016"+
-		"q\u0001\u0000\u0000\u0000\u0018z\u0001\u0000\u0000\u0000\u001a\u0081\u0001"+
-		"\u0000\u0000\u0000\u001c\u0087\u0001\u0000\u0000\u0000\u001e\u0089\u0001"+
-		"\u0000\u0000\u0000 \u0098\u0001\u0000\u0000\u0000\"\u009a\u0001\u0000"+
-		"\u0000\u0000$\u00a9\u0001\u0000\u0000\u0000&\u00b3\u0001\u0000\u0000\u0000"+
-		"()\u0005\u0001\u0000\u0000)*\u0005\u001f\u0000\u0000*+\u0005\u0012\u0000"+
-		"\u0000+,\u0003\u0002\u0001\u0000,-\u0003\b\u0004\u0000-.\u0005\u0002\u0000"+
-		"\u0000./\u0003\n\u0005\u0000/0\u0005\u0003\u0000\u00000\u0001\u0001\u0000"+
-		"\u0000\u000012\u0005\u0004\u0000\u000023\u0003\u0006\u0003\u000034\u0005"+
-		"\u001f\u0000\u000045\u0003\u0004\u0002\u000056\u0005\u0012\u0000\u0000"+
-		"67\u0003\u0002\u0001\u000079\u0001\u0000\u0000\u000081\u0001\u0000\u0000"+
-		"\u000089\u0001\u0000\u0000\u00009\u0003\u0001\u0000\u0000\u0000:;\u0005"+
-		"\u0014\u0000\u0000;=\u0005\u001f\u0000\u0000<:\u0001\u0000\u0000\u0000"+
-		"=@\u0001\u0000\u0000\u0000><\u0001\u0000\u0000\u0000>?\u0001\u0000\u0000"+
-		"\u0000?\u0005\u0001\u0000\u0000\u0000@>\u0001\u0000\u0000\u0000AB\u0007"+
-		"\u0000\u0000\u0000B\u0007\u0001\u0000\u0000\u0000CD\u0005\f\u0000\u0000"+
-		"DE\u0005\u001f\u0000\u0000EF\u0005\u0012\u0000\u0000FG\u0003\u0002\u0001"+
-		"\u0000GH\u0003\n\u0005\u0000HI\u0003\b\u0004\u0000IK\u0001\u0000\u0000"+
-		"\u0000JC\u0001\u0000\u0000\u0000JK\u0001\u0000\u0000\u0000K\t\u0001\u0000"+
-		"\u0000\u0000LM\u0005\u0019\u0000\u0000MN\u0003\f\u0006\u0000NO\u0005\u001a"+
-		"\u0000\u0000O\u000b\u0001\u0000\u0000\u0000PR\u0003\u000e\u0007\u0000"+
-		"QP\u0001\u0000\u0000\u0000RU\u0001\u0000\u0000\u0000SQ\u0001\u0000\u0000"+
-		"\u0000ST\u0001\u0000\u0000\u0000T\r\u0001\u0000\u0000\u0000US\u0001\u0000"+
-		"\u0000\u0000V[\u0003\u0010\b\u0000W[\u0003\u0016\u000b\u0000X[\u0003\u0018"+
-		"\f\u0000Y[\u0003\u0012\t\u0000ZV\u0001\u0000\u0000\u0000ZW\u0001\u0000"+
-		"\u0000\u0000ZX\u0001\u0000\u0000\u0000ZY\u0001\u0000\u0000\u0000[\u000f"+
-		"\u0001\u0000\u0000\u0000\\]\u0005\u001f\u0000\u0000]^\u0005\r\u0000\u0000"+
-		"^_\u0003\u001a\r\u0000_`\u0005\u0012\u0000\u0000`\u0011\u0001\u0000\u0000"+
-		"\u0000ab\u0005\u0007\u0000\u0000bc\u0005\u0017\u0000\u0000ce\u0003\u001a"+
-		"\r\u0000df\u0003\u0014\n\u0000ed\u0001\u0000\u0000\u0000ef\u0001\u0000"+
-		"\u0000\u0000fg\u0001\u0000\u0000\u0000gh\u0005\u0018\u0000\u0000hi\u0005"+
-		"\u0012\u0000\u0000i\u0013\u0001\u0000\u0000\u0000jk\u0005\u0014\u0000"+
-		"\u0000km\u0003\u001a\r\u0000lj\u0001\u0000\u0000\u0000mp\u0001\u0000\u0000"+
-		"\u0000nl\u0001\u0000\u0000\u0000no\u0001\u0000\u0000\u0000o\u0015\u0001"+
-		"\u0000\u0000\u0000pn\u0001\u0000\u0000\u0000qr\u0005\n\u0000\u0000rs\u0005"+
-		"\u0017\u0000\u0000st\u0003\u001a\r\u0000tu\u0005\u0018\u0000\u0000ux\u0003"+
-		"\n\u0005\u0000vw\u0005\u000b\u0000\u0000wy\u0003\n\u0005\u0000xv\u0001"+
-		"\u0000\u0000\u0000xy\u0001\u0000\u0000\u0000y\u0017\u0001\u0000\u0000"+
-		"\u0000z{\u0005\b\u0000\u0000{|\u0005\u0017\u0000\u0000|}\u0003\u001a\r"+
-		"\u0000}~\u0005\u0018\u0000\u0000~\u007f\u0005\t\u0000\u0000\u007f\u0080"+
-		"\u0003\n\u0005\u0000\u0080\u0019\u0001\u0000\u0000\u0000\u0081\u0085\u0003"+
-		"\u001e\u000f\u0000\u0082\u0083\u0003\u001c\u000e\u0000\u0083\u0084\u0003"+
-		"\u001e\u000f\u0000\u0084\u0086\u0001\u0000\u0000\u0000\u0085\u0082\u0001"+
-		"\u0000\u0000\u0000\u0085\u0086\u0001\u0000\u0000\u0000\u0086\u001b\u0001"+
-		"\u0000\u0000\u0000\u0087\u0088\u0007\u0001\u0000\u0000\u0088\u001d\u0001"+
-		"\u0000\u0000\u0000\u0089\u008a\u0003\"\u0011\u0000\u008a\u008b\u0003 "+
-		"\u0010\u0000\u008b\u001f\u0001\u0000\u0000\u0000\u008c\u008d\u0005\u000e"+
-		"\u0000\u0000\u008d\u008e\u0003\"\u0011\u0000\u008e\u008f\u0003 \u0010"+
-		"\u0000\u008f\u0091\u0001\u0000\u0000\u0000\u0090\u008c\u0001\u0000\u0000"+
-		"\u0000\u0090\u0091\u0001\u0000\u0000\u0000\u0091\u0099\u0001\u0000\u0000"+
-		"\u0000\u0092\u0093\u0005\u000f\u0000\u0000\u0093\u0094\u0003\"\u0011\u0000"+
-		"\u0094\u0095\u0003 \u0010\u0000\u0095\u0097\u0001\u0000\u0000\u0000\u0096"+
-		"\u0092\u0001\u0000\u0000\u0000\u0096\u0097\u0001\u0000\u0000\u0000\u0097"+
-		"\u0099\u0001\u0000\u0000\u0000\u0098\u0090\u0001\u0000\u0000\u0000\u0098"+
-		"\u0096\u0001\u0000\u0000\u0000\u0099!\u0001\u0000\u0000\u0000\u009a\u009b"+
-		"\u0003&\u0013\u0000\u009b\u009c\u0003$\u0012\u0000\u009c#\u0001\u0000"+
-		"\u0000\u0000\u009d\u009e\u0005\u0010\u0000\u0000\u009e\u009f\u0003&\u0013"+
-		"\u0000\u009f\u00a0\u0003$\u0012\u0000\u00a0\u00a2\u0001\u0000\u0000\u0000"+
-		"\u00a1\u009d\u0001\u0000\u0000\u0000\u00a1\u00a2\u0001\u0000\u0000\u0000"+
-		"\u00a2\u00aa\u0001\u0000\u0000\u0000\u00a3\u00a4\u0005\u0011\u0000\u0000"+
-		"\u00a4\u00a5\u0003&\u0013\u0000\u00a5\u00a6\u0003$\u0012\u0000\u00a6\u00a8"+
-		"\u0001\u0000\u0000\u0000\u00a7\u00a3\u0001\u0000\u0000\u0000\u00a7\u00a8"+
-		"\u0001\u0000\u0000\u0000\u00a8\u00aa\u0001\u0000\u0000\u0000\u00a9\u00a1"+
-		"\u0001\u0000\u0000\u0000\u00a9\u00a7\u0001\u0000\u0000\u0000\u00aa%\u0001"+
-		"\u0000\u0000\u0000\u00ab\u00ac\u0005\u0017\u0000\u0000\u00ac\u00ad\u0003"+
-		"\u001a\r\u0000\u00ad\u00ae\u0005\u0018\u0000\u0000\u00ae\u00b4\u0001\u0000"+
-		"\u0000\u0000\u00af\u00b4\u0005\u001c\u0000\u0000\u00b0\u00b4\u0005\u001d"+
-		"\u0000\u0000\u00b1\u00b4\u0005\u001e\u0000\u0000\u00b2\u00b4\u0005\u001f"+
-		"\u0000\u0000\u00b3\u00ab\u0001\u0000\u0000\u0000\u00b3\u00af\u0001\u0000"+
-		"\u0000\u0000\u00b3\u00b0\u0001\u0000\u0000\u0000\u00b3\u00b1\u0001\u0000"+
-		"\u0000\u0000\u00b3\u00b2\u0001\u0000\u0000\u0000\u00b4\'\u0001\u0000\u0000"+
-		"\u0000\u00108>JSZenx\u0085\u0090\u0096\u0098\u00a1\u00a7\u00a9\u00b3";
+		"\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0000"+
+		"\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0001\u0001\u0001\u0001\u0001"+
+		"\u0001\u0001\u0001\u0001\u0001\u0001\u0005\u00016\b\u0001\n\u0001\f\u0001"+
+		"9\t\u0001\u0001\u0002\u0001\u0002\u0001\u0002\u0005\u0002>\b\u0002\n\u0002"+
+		"\f\u0002A\t\u0002\u0001\u0003\u0001\u0003\u0001\u0004\u0001\u0004\u0001"+
+		"\u0004\u0001\u0004\u0003\u0004I\b\u0004\u0001\u0004\u0001\u0004\u0001"+
+		"\u0004\u0001\u0004\u0001\u0004\u0005\u0004P\b\u0004\n\u0004\f\u0004S\t"+
+		"\u0004\u0001\u0005\u0001\u0005\u0001\u0005\u0001\u0005\u0001\u0005\u0001"+
+		"\u0005\u0001\u0005\u0005\u0005\\\b\u0005\n\u0005\f\u0005_\t\u0005\u0001"+
+		"\u0006\u0001\u0006\u0005\u0006c\b\u0006\n\u0006\f\u0006f\t\u0006\u0001"+
+		"\u0006\u0001\u0006\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001"+
+		"\u0007\u0003\u0007o\b\u0007\u0001\b\u0001\b\u0001\b\u0001\b\u0001\b\u0001"+
+		"\t\u0001\t\u0001\t\u0001\t\u0003\tz\b\t\u0001\t\u0001\t\u0001\t\u0003"+
+		"\t\u007f\b\t\u0005\t\u0081\b\t\n\t\f\t\u0084\t\t\u0001\t\u0001\t\u0001"+
+		"\t\u0001\n\u0001\n\u0001\n\u0001\n\u0001\n\u0001\n\u0001\n\u0003\n\u0090"+
+		"\b\n\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001"+
+		"\u000b\u0001\u000b\u0001\f\u0001\f\u0001\f\u0001\f\u0001\f\u0005\f\u009e"+
+		"\b\f\n\f\f\f\u00a1\t\f\u0003\f\u00a3\b\f\u0001\f\u0001\f\u0001\f\u0001"+
+		"\r\u0001\r\u0001\r\u0001\r\u0003\r\u00ac\b\r\u0001\u000e\u0001\u000e\u0001"+
+		"\u000f\u0001\u000f\u0001\u000f\u0005\u000f\u00b3\b\u000f\n\u000f\f\u000f"+
+		"\u00b6\t\u000f\u0001\u0010\u0001\u0010\u0001\u0010\u0005\u0010\u00bb\b"+
+		"\u0010\n\u0010\f\u0010\u00be\t\u0010\u0001\u0011\u0001\u0011\u0001\u0011"+
+		"\u0001\u0011\u0001\u0011\u0003\u0011\u00c5\b\u0011\u0001\u0011\u0001\u0011"+
+		"\u0003\u0011\u00c9\b\u0011\u0003\u0011\u00cb\b\u0011\u0001\u0012\u0001"+
+		"\u0012\u0001\u0012\u0000\u0000\u0013\u0000\u0002\u0004\u0006\b\n\f\u000e"+
+		"\u0010\u0012\u0014\u0016\u0018\u001a\u001c\u001e \"$\u0000\u0005\u0001"+
+		"\u0000\u0005\u0006\u0002\u0000\u0015\u0016\u001b\u001b\u0001\u0000\u000e"+
+		"\u000f\u0001\u0000\u0010\u0011\u0001\u0000\u001c\u001d\u00d1\u0000&\u0001"+
+		"\u0000\u0000\u0000\u00027\u0001\u0000\u0000\u0000\u0004:\u0001\u0000\u0000"+
+		"\u0000\u0006B\u0001\u0000\u0000\u0000\bQ\u0001\u0000\u0000\u0000\nT\u0001"+
+		"\u0000\u0000\u0000\f`\u0001\u0000\u0000\u0000\u000en\u0001\u0000\u0000"+
+		"\u0000\u0010p\u0001\u0000\u0000\u0000\u0012u\u0001\u0000\u0000\u0000\u0014"+
+		"\u0088\u0001\u0000\u0000\u0000\u0016\u0091\u0001\u0000\u0000\u0000\u0018"+
+		"\u0098\u0001\u0000\u0000\u0000\u001a\u00a7\u0001\u0000\u0000\u0000\u001c"+
+		"\u00ad\u0001\u0000\u0000\u0000\u001e\u00af\u0001\u0000\u0000\u0000 \u00b7"+
+		"\u0001\u0000\u0000\u0000\"\u00ca\u0001\u0000\u0000\u0000$\u00cc\u0001"+
+		"\u0000\u0000\u0000&\'\u0005\u0001\u0000\u0000\'(\u0005\u001f\u0000\u0000"+
+		"()\u0005\u0012\u0000\u0000)*\u0003\u0002\u0001\u0000*+\u0003\b\u0004\u0000"+
+		"+,\u0005\u0002\u0000\u0000,-\u0003\f\u0006\u0000-.\u0005\u0003\u0000\u0000"+
+		".\u0001\u0001\u0000\u0000\u0000/0\u0005\u0004\u0000\u000001\u0003\u0004"+
+		"\u0002\u000012\u0005\u0013\u0000\u000023\u0003\u0006\u0003\u000034\u0005"+
+		"\u0012\u0000\u000046\u0001\u0000\u0000\u00005/\u0001\u0000\u0000\u0000"+
+		"69\u0001\u0000\u0000\u000075\u0001\u0000\u0000\u000078\u0001\u0000\u0000"+
+		"\u00008\u0003\u0001\u0000\u0000\u000097\u0001\u0000\u0000\u0000:?\u0005"+
+		"\u001f\u0000\u0000;<\u0005\u0014\u0000\u0000<>\u0005\u001f\u0000\u0000"+
+		"=;\u0001\u0000\u0000\u0000>A\u0001\u0000\u0000\u0000?=\u0001\u0000\u0000"+
+		"\u0000?@\u0001\u0000\u0000\u0000@\u0005\u0001\u0000\u0000\u0000A?\u0001"+
+		"\u0000\u0000\u0000BC\u0007\u0000\u0000\u0000C\u0007\u0001\u0000\u0000"+
+		"\u0000DE\u0005\f\u0000\u0000EF\u0005\u001f\u0000\u0000FH\u0005\u0017\u0000"+
+		"\u0000GI\u0003\n\u0005\u0000HG\u0001\u0000\u0000\u0000HI\u0001\u0000\u0000"+
+		"\u0000IJ\u0001\u0000\u0000\u0000JK\u0005\u0018\u0000\u0000KL\u0003\u0002"+
+		"\u0001\u0000LM\u0003\f\u0006\u0000MN\u0005\u0012\u0000\u0000NP\u0001\u0000"+
+		"\u0000\u0000OD\u0001\u0000\u0000\u0000PS\u0001\u0000\u0000\u0000QO\u0001"+
+		"\u0000\u0000\u0000QR\u0001\u0000\u0000\u0000R\t\u0001\u0000\u0000\u0000"+
+		"SQ\u0001\u0000\u0000\u0000TU\u0005\u001f\u0000\u0000UV\u0005\u0013\u0000"+
+		"\u0000V]\u0003\u0006\u0003\u0000WX\u0005\u0014\u0000\u0000XY\u0005\u001f"+
+		"\u0000\u0000YZ\u0005\u0013\u0000\u0000Z\\\u0003\u0006\u0003\u0000[W\u0001"+
+		"\u0000\u0000\u0000\\_\u0001\u0000\u0000\u0000][\u0001\u0000\u0000\u0000"+
+		"]^\u0001\u0000\u0000\u0000^\u000b\u0001\u0000\u0000\u0000_]\u0001\u0000"+
+		"\u0000\u0000`d\u0005\u0019\u0000\u0000ac\u0003\u000e\u0007\u0000ba\u0001"+
+		"\u0000\u0000\u0000cf\u0001\u0000\u0000\u0000db\u0001\u0000\u0000\u0000"+
+		"de\u0001\u0000\u0000\u0000eg\u0001\u0000\u0000\u0000fd\u0001\u0000\u0000"+
+		"\u0000gh\u0005\u001a\u0000\u0000h\r\u0001\u0000\u0000\u0000io\u0003\u0010"+
+		"\b\u0000jo\u0003\u0012\t\u0000ko\u0003\u0014\n\u0000lo\u0003\u0016\u000b"+
+		"\u0000mo\u0003\u0018\f\u0000ni\u0001\u0000\u0000\u0000nj\u0001\u0000\u0000"+
+		"\u0000nk\u0001\u0000\u0000\u0000nl\u0001\u0000\u0000\u0000nm\u0001\u0000"+
+		"\u0000\u0000o\u000f\u0001\u0000\u0000\u0000pq\u0005\u001f\u0000\u0000"+
+		"qr\u0005\r\u0000\u0000rs\u0003\u001a\r\u0000st\u0005\u0012\u0000\u0000"+
+		"t\u0011\u0001\u0000\u0000\u0000uv\u0005\u0007\u0000\u0000vy\u0005\u0017"+
+		"\u0000\u0000wz\u0003\u001a\r\u0000xz\u0005\u001e\u0000\u0000yw\u0001\u0000"+
+		"\u0000\u0000yx\u0001\u0000\u0000\u0000z\u0082\u0001\u0000\u0000\u0000"+
+		"{~\u0005\u0014\u0000\u0000|\u007f\u0003\u001a\r\u0000}\u007f\u0005\u001e"+
+		"\u0000\u0000~|\u0001\u0000\u0000\u0000~}\u0001\u0000\u0000\u0000\u007f"+
+		"\u0081\u0001\u0000\u0000\u0000\u0080{\u0001\u0000\u0000\u0000\u0081\u0084"+
+		"\u0001\u0000\u0000\u0000\u0082\u0080\u0001\u0000\u0000\u0000\u0082\u0083"+
+		"\u0001\u0000\u0000\u0000\u0083\u0085\u0001\u0000\u0000\u0000\u0084\u0082"+
+		"\u0001\u0000\u0000\u0000\u0085\u0086\u0005\u0018\u0000\u0000\u0086\u0087"+
+		"\u0005\u0012\u0000\u0000\u0087\u0013\u0001\u0000\u0000\u0000\u0088\u0089"+
+		"\u0005\n\u0000\u0000\u0089\u008a\u0005\u0017\u0000\u0000\u008a\u008b\u0003"+
+		"\u001a\r\u0000\u008b\u008c\u0005\u0018\u0000\u0000\u008c\u008f\u0003\f"+
+		"\u0006\u0000\u008d\u008e\u0005\u000b\u0000\u0000\u008e\u0090\u0003\f\u0006"+
+		"\u0000\u008f\u008d\u0001\u0000\u0000\u0000\u008f\u0090\u0001\u0000\u0000"+
+		"\u0000\u0090\u0015\u0001\u0000\u0000\u0000\u0091\u0092\u0005\b\u0000\u0000"+
+		"\u0092\u0093\u0005\u0017\u0000\u0000\u0093\u0094\u0003\u001a\r\u0000\u0094"+
+		"\u0095\u0005\u0018\u0000\u0000\u0095\u0096\u0005\t\u0000\u0000\u0096\u0097"+
+		"\u0003\f\u0006\u0000\u0097\u0017\u0001\u0000\u0000\u0000\u0098\u0099\u0005"+
+		"\u001f\u0000\u0000\u0099\u00a2\u0005\u0017\u0000\u0000\u009a\u009f\u0003"+
+		"\u001a\r\u0000\u009b\u009c\u0005\u0014\u0000\u0000\u009c\u009e\u0003\u001a"+
+		"\r\u0000\u009d\u009b\u0001\u0000\u0000\u0000\u009e\u00a1\u0001\u0000\u0000"+
+		"\u0000\u009f\u009d\u0001\u0000\u0000\u0000\u009f\u00a0\u0001\u0000\u0000"+
+		"\u0000\u00a0\u00a3\u0001\u0000\u0000\u0000\u00a1\u009f\u0001\u0000\u0000"+
+		"\u0000\u00a2\u009a\u0001\u0000\u0000\u0000\u00a2\u00a3\u0001\u0000\u0000"+
+		"\u0000\u00a3\u00a4\u0001\u0000\u0000\u0000\u00a4\u00a5\u0005\u0018\u0000"+
+		"\u0000\u00a5\u00a6\u0005\u0012\u0000\u0000\u00a6\u0019\u0001\u0000\u0000"+
+		"\u0000\u00a7\u00ab\u0003\u001e\u000f\u0000\u00a8\u00a9\u0003\u001c\u000e"+
+		"\u0000\u00a9\u00aa\u0003\u001e\u000f\u0000\u00aa\u00ac\u0001\u0000\u0000"+
+		"\u0000\u00ab\u00a8\u0001\u0000\u0000\u0000\u00ab\u00ac\u0001\u0000\u0000"+
+		"\u0000\u00ac\u001b\u0001\u0000\u0000\u0000\u00ad\u00ae\u0007\u0001\u0000"+
+		"\u0000\u00ae\u001d\u0001\u0000\u0000\u0000\u00af\u00b4\u0003 \u0010\u0000"+
+		"\u00b0\u00b1\u0007\u0002\u0000\u0000\u00b1\u00b3\u0003 \u0010\u0000\u00b2"+
+		"\u00b0\u0001\u0000\u0000\u0000\u00b3\u00b6\u0001\u0000\u0000\u0000\u00b4"+
+		"\u00b2\u0001\u0000\u0000\u0000\u00b4\u00b5\u0001\u0000\u0000\u0000\u00b5"+
+		"\u001f\u0001\u0000\u0000\u0000\u00b6\u00b4\u0001\u0000\u0000\u0000\u00b7"+
+		"\u00bc\u0003\"\u0011\u0000\u00b8\u00b9\u0007\u0003\u0000\u0000\u00b9\u00bb"+
+		"\u0003\"\u0011\u0000\u00ba\u00b8\u0001\u0000\u0000\u0000\u00bb\u00be\u0001"+
+		"\u0000\u0000\u0000\u00bc\u00ba\u0001\u0000\u0000\u0000\u00bc\u00bd\u0001"+
+		"\u0000\u0000\u0000\u00bd!\u0001\u0000\u0000\u0000\u00be\u00bc\u0001\u0000"+
+		"\u0000\u0000\u00bf\u00c0\u0005\u0017\u0000\u0000\u00c0\u00c1\u0003\u001a"+
+		"\r\u0000\u00c1\u00c2\u0005\u0018\u0000\u0000\u00c2\u00cb\u0001\u0000\u0000"+
+		"\u0000\u00c3\u00c5\u0007\u0002\u0000\u0000\u00c4\u00c3\u0001\u0000\u0000"+
+		"\u0000\u00c4\u00c5\u0001\u0000\u0000\u0000\u00c5\u00c8\u0001\u0000\u0000"+
+		"\u0000\u00c6\u00c9\u0005\u001f\u0000\u0000\u00c7\u00c9\u0003$\u0012\u0000"+
+		"\u00c8\u00c6\u0001\u0000\u0000\u0000\u00c8\u00c7\u0001\u0000\u0000\u0000"+
+		"\u00c9\u00cb\u0001\u0000\u0000\u0000\u00ca\u00bf\u0001\u0000\u0000\u0000"+
+		"\u00ca\u00c4\u0001\u0000\u0000\u0000\u00cb#\u0001\u0000\u0000\u0000\u00cc"+
+		"\u00cd\u0007\u0004\u0000\u0000\u00cd%\u0001\u0000\u0000\u0000\u00137?"+
+		"HQ]dny~\u0082\u008f\u009f\u00a2\u00ab\u00b4\u00bc\u00c4\u00c8\u00ca";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

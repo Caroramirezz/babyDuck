@@ -31,7 +31,7 @@ public class BabyDuckBaseVisitor<T> extends AbstractParseTreeVisitor<T> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitListaIds(BabyDuckParser.ListaIdsContext ctx) { return visitChildren(ctx); }
+	@Override public T visitIdList(BabyDuckParser.IdListContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -52,14 +52,14 @@ public class BabyDuckBaseVisitor<T> extends AbstractParseTreeVisitor<T> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitBody(BabyDuckParser.BodyContext ctx) { return visitChildren(ctx); }
+	@Override public T visitParamList(BabyDuckParser.ParamListContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitStatement_list(BabyDuckParser.Statement_listContext ctx) { return visitChildren(ctx); }
+	@Override public T visitBody(BabyDuckParser.BodyContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -73,35 +73,35 @@ public class BabyDuckBaseVisitor<T> extends AbstractParseTreeVisitor<T> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAssign_stmt(BabyDuckParser.Assign_stmtContext ctx) { return visitChildren(ctx); }
+	@Override public T visitAssign(BabyDuckParser.AssignContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPrint_stmt(BabyDuckParser.Print_stmtContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPrint(BabyDuckParser.PrintContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPrint_list(BabyDuckParser.Print_listContext ctx) { return visitChildren(ctx); }
+	@Override public T visitCondition(BabyDuckParser.ConditionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitCondition_stmt(BabyDuckParser.Condition_stmtContext ctx) { return visitChildren(ctx); }
+	@Override public T visitCycle(BabyDuckParser.CycleContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitCycle_stmt(BabyDuckParser.Cycle_stmtContext ctx) { return visitChildren(ctx); }
+	@Override public T visitF_call(BabyDuckParser.F_callContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -129,13 +129,6 @@ public class BabyDuckBaseVisitor<T> extends AbstractParseTreeVisitor<T> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExp_tail(BabyDuckParser.Exp_tailContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitTermino(BabyDuckParser.TerminoContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -143,12 +136,12 @@ public class BabyDuckBaseVisitor<T> extends AbstractParseTreeVisitor<T> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitTermino_tail(BabyDuckParser.Termino_tailContext ctx) { return visitChildren(ctx); }
+	@Override public T visitFactor(BabyDuckParser.FactorContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitFactor(BabyDuckParser.FactorContext ctx) { return visitChildren(ctx); }
+	@Override public T visitCte(BabyDuckParser.CteContext ctx) { return visitChildren(ctx); }
 }

@@ -40,13 +40,13 @@ public class BabyDuckBaseListener implements BabyDuckListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterListaIds(BabyDuckParser.ListaIdsContext ctx) { }
+	@Override public void enterIdList(BabyDuckParser.IdListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitListaIds(BabyDuckParser.ListaIdsContext ctx) { }
+	@Override public void exitIdList(BabyDuckParser.IdListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -76,6 +76,18 @@ public class BabyDuckBaseListener implements BabyDuckListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterParamList(BabyDuckParser.ParamListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParamList(BabyDuckParser.ParamListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterBody(BabyDuckParser.BodyContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -83,18 +95,6 @@ public class BabyDuckBaseListener implements BabyDuckListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitBody(BabyDuckParser.BodyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStatement_list(BabyDuckParser.Statement_listContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStatement_list(BabyDuckParser.Statement_listContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -112,61 +112,61 @@ public class BabyDuckBaseListener implements BabyDuckListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAssign_stmt(BabyDuckParser.Assign_stmtContext ctx) { }
+	@Override public void enterAssign(BabyDuckParser.AssignContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAssign_stmt(BabyDuckParser.Assign_stmtContext ctx) { }
+	@Override public void exitAssign(BabyDuckParser.AssignContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPrint_stmt(BabyDuckParser.Print_stmtContext ctx) { }
+	@Override public void enterPrint(BabyDuckParser.PrintContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPrint_stmt(BabyDuckParser.Print_stmtContext ctx) { }
+	@Override public void exitPrint(BabyDuckParser.PrintContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPrint_list(BabyDuckParser.Print_listContext ctx) { }
+	@Override public void enterCondition(BabyDuckParser.ConditionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPrint_list(BabyDuckParser.Print_listContext ctx) { }
+	@Override public void exitCondition(BabyDuckParser.ConditionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCondition_stmt(BabyDuckParser.Condition_stmtContext ctx) { }
+	@Override public void enterCycle(BabyDuckParser.CycleContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCondition_stmt(BabyDuckParser.Condition_stmtContext ctx) { }
+	@Override public void exitCycle(BabyDuckParser.CycleContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCycle_stmt(BabyDuckParser.Cycle_stmtContext ctx) { }
+	@Override public void enterF_call(BabyDuckParser.F_callContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCycle_stmt(BabyDuckParser.Cycle_stmtContext ctx) { }
+	@Override public void exitF_call(BabyDuckParser.F_callContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -208,18 +208,6 @@ public class BabyDuckBaseListener implements BabyDuckListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExp_tail(BabyDuckParser.Exp_tailContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitExp_tail(BabyDuckParser.Exp_tailContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterTermino(BabyDuckParser.TerminoContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -232,18 +220,6 @@ public class BabyDuckBaseListener implements BabyDuckListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTermino_tail(BabyDuckParser.Termino_tailContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitTermino_tail(BabyDuckParser.Termino_tailContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterFactor(BabyDuckParser.FactorContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -251,6 +227,18 @@ public class BabyDuckBaseListener implements BabyDuckListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitFactor(BabyDuckParser.FactorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCte(BabyDuckParser.CteContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCte(BabyDuckParser.CteContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

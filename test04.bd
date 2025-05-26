@@ -1,6 +1,6 @@
 program testCase;
-var int m, n;
-var float f;
+var m, n : int;
+var f    : float;
 main {
     m = 42;
     n = m * 2 + 5;
