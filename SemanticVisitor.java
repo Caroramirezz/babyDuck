@@ -14,6 +14,7 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
 
     public FunctionDirectory getFunctionDirectory() { return dir; }
     public QuadrupleGenerator getQuadGenerator()    { return qg;  }
+    public VirtualMemoryManager getVirtualMemoryManager() { return vmm; }
 
     @Override
     public Void visitPrograma(BabyDuckParser.ProgramaContext ctx) {
@@ -82,7 +83,7 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
         if (vi == null) vi = dir.getFunction("global").getVariable(id);
         if (vi == null) throw new RuntimeException("Variable no declarada: " + id);
         visit(ctx.expresion());
-        qg.generateAssignment(id);
+        qg.generateAssignmentAddress(vi.address);
         return null;
     }
 

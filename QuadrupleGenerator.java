@@ -39,7 +39,14 @@ public class QuadrupleGenerator {
         quads.add(new Cuadruplo(op, arg1, arg2, Integer.toString(tempAddr)));
     }
 
-    /** Generate an assignment quadruple. */
+    /** Generate an assignment quadruple using the destination address. */
+    public void generateAssignmentAddress(int destAddr) {
+        String val = operandStack.pop();
+        typeStack.pop();
+        quads.add(new Cuadruplo("=", val, "-", Integer.toString(destAddr)));
+    }
+
+    /** Legacy: generates assignment by variable name (not recommended for VM execution). */
     public void generateAssignment(String varName) {
         String val = operandStack.pop();
         typeStack.pop();

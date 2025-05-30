@@ -1,0 +1,10 @@
+program exprTest;
+var a, b : int;
+var c : float;
+main {
+    a = 2 + 3 * 4;
+    b = (a - 5) / 3;
+    c = 1.5 + a * 2.0;
+    print(a, b, c);
+}
+end

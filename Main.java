@@ -1,44 +1,51 @@
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        String[] testFiles = args.length > 0 ? args : new String[]{"test01.bd"};
+        String[] testFiles = args.length > 0 ? args : new String[]{"testExpr.bd"};
 
         for (String filePath : testFiles) {
-            System.out.println("=== Ejecutando " + filePath + " ===");
+            System.out.println("=== Ejecutando " + filePath + " ===\n");
 
-            // 1) Parse
-            CharStream input = CharStreams.fromFileName(filePath);
-            BabyDuckLexer lexer = new BabyDuckLexer(input);
+            // 1) Parseo
+            CharStream input    = CharStreams.fromFileName(filePath);
+            BabyDuckLexer lexer  = new BabyDuckLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
-            BabyDuckParser parser = new BabyDuckParser(tokens);
-            ParseTree tree = parser.programa();
+            BabyDuckParser parser   = new BabyDuckParser(tokens);
+            BabyDuckParser.ProgramaContext tree = parser.programa();
 
-            // 2) Print parse tree
-            System.out.println(tree.toStringTree(parser));
-
-            // 3) Semantic analysis + quadruple generation
+            // 2) Semántica + cuádruplos
             SemanticVisitor visitor = new SemanticVisitor();
-            visitor.visit(tree);
+            visitor.visitPrograma(tree);
 
-            // 4) Print function directory
-            System.out.println("\n--- Directorio de Funciones y Variables ---");
-            visitor.getFunctionDirectory().getFunctionNames().forEach(fname -> {
+            // 3) Directorio de funciones y variables
+            System.out.println("--- Directorio de Funciones y Variables ---");
+            for (String fname : visitor.getFunctionDirectory().getFunctionNames()) {
                 FunctionInfo fi = visitor.getFunctionDirectory().getFunction(fname);
                 System.out.println("Función: " + fname + " (retorno=" + fi.returnType + ")");
-                fi.getVariableNames().forEach(var -> {
+                for (String var : fi.getVariableNames()) {
                     VariableInfo vi = fi.getVariable(var);
-                    System.out.printf("  %s : tipo=%s, addr=%d, scope=%s%n", var, vi.type, vi.address, vi.scope);
-                });
-            });
+                    System.out.printf("  %s : tipo=%s, addr=%d, scope=%s%n",
+                                      var, vi.type, vi.address, vi.scope);
+                }
+            }
 
-            // 5) Print quadruples (incluye ERA/GOSUB/BEGIN/ENDPROC)
+            // 4) Imprimir cuádruplos
             visitor.getQuadGenerator().printQuadruples();
-            System.out.println();
+
+            // 5) Ejecutar Máquina Virtual
+            VirtualMachine vm = new VirtualMachine(visitor.getVirtualMemoryManager());
+            vm.loadConstants();
+            System.out.println("\n--- Salida de la Máquina Virtual ---");
+            List<Cuadruplo> quads = visitor.getQuadGenerator().getQuadruples();
+            vm.run(quads);
+
+            System.out.println("\n");
         }
     }
 }

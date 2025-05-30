@@ -12,6 +12,10 @@ public class VirtualMemoryManager {
 
     private Map<String,Integer> constTable = new HashMap<>();
 
+    public Map<String,Integer> getConstTable() {
+        return Collections.unmodifiableMap(constTable);
+    }
+
     public int allocGlobal(String type) {
         return type.equals("float") ? nextGlobalFloat++ : nextGlobalInt++;
     }
