@@ -8,6 +8,13 @@ var prod : int;
     print(prod);
 };
 
+void multAndPrint2(a : int, b : int)
+var prod : int;
+{
+    prod = a * b;
+    print(prod);
+};
+
 main {
     multAndPrint(3, 4);
     print(x);

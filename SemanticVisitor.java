@@ -20,6 +20,8 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
     public Void visitPrograma(BabyDuckParser.ProgramaContext ctx) {
         // Visitar vars, funcs y body en orden
         visit(ctx.vars());
+
+        
         visit(ctx.funcs());
         visit(ctx.body());
         return null;
@@ -49,7 +51,7 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
         for (int i = 0; i < voids.size(); i++) {
             String fname = ctx.ID(i).getText();            
             // Generar etiqueta de inicio de función
-            qg.generateFuncBegin(fname);
+            //qg.generateFuncBegin(fname);
             dir.addFunction(fname, "void");
             dir.setCurrentFunction(fname);
 

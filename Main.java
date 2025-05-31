@@ -1,6 +1,7 @@
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,10 @@ public class Main {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             BabyDuckParser parser   = new BabyDuckParser(tokens);
             BabyDuckParser.ProgramaContext tree = parser.programa();
+
+            System.out.println("Árbol sintáctico:");
+            System.out.println(tree.toStringTree(parser));
+            System.out.println();
 
             // 2) Semántica + cuádruplos
             SemanticVisitor visitor = new SemanticVisitor();
