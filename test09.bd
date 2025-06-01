@@ -1,0 +1,21 @@
+program fibRec;
+var n, result : int;
+
+void fib(x:int) var t1, t2 : int {
+    if (x < 2) {
+        result = x;
+    } else {
+        fib(x - 1);
+        t1 = result;
+        fib(x - 2);
+        t2 = result;
+        result = t1 + t2;
+    }
+};
+
+main {
+    n = 6;
+    fib(n);
+    print(result);
+}
+end

@@ -12,18 +12,18 @@ public class Main {
         for (String filePath : testFiles) {
             System.out.println("=== Ejecutando " + filePath + " ===\n");
 
-            // 1) Parseo
+            // 1) Parsing
             CharStream input    = CharStreams.fromFileName(filePath);
             BabyDuckLexer lexer  = new BabyDuckLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             BabyDuckParser parser   = new BabyDuckParser(tokens);
             BabyDuckParser.ProgramaContext tree = parser.programa();
 
-            // 2) Semántica + cuádruplos
+            // 2. Semantic & quads
             SemanticVisitor visitor = new SemanticVisitor();
             visitor.visitPrograma(tree);
 
-            // 3) Directorio de funciones y variables
+            // 3) FunctionDir & Vars
             System.out.println("--- Directorio de Funciones y Variables ---");
             for (String fname : visitor.getFunctionDirectory().getFunctionNames()) {
                 FunctionInfo fi = visitor.getFunctionDirectory().getFunction(fname);
@@ -35,11 +35,11 @@ public class Main {
                 }
             }
 
-            // 4) Imprimir cuádruplos
+            // 4) print quads
             visitor.getQuadGenerator().printQuadruples();
 
-            // 5) Ejecutar Máquina Virtual
-            VirtualMachine vm = new VirtualMachine(visitor.getVirtualMemoryManager());
+            // 5) virtual machine
+            VirtualMachine vm = new VirtualMachine(visitor.getVirtualMemoryManager(), visitor.getFunctionDirectory());
             vm.loadConstants();
             System.out.println("\n--- Salida de la Máquina Virtual ---");
             List<Cuadruplo> quads = visitor.getQuadGenerator().getQuadruples();

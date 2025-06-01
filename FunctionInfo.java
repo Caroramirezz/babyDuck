@@ -2,6 +2,7 @@ import java.util.*;
 
 public class FunctionInfo {
     public String returnType;
+    public List<String> paramNames = new ArrayList<>();
     public List<String> paramTypes;
     public Map<String, VariableInfo> varTable;
 
@@ -9,6 +10,12 @@ public class FunctionInfo {
         this.returnType = returnType;
         this.paramTypes = new ArrayList<>();
         this.varTable = new HashMap<>();
+    }
+
+    public void addParam(String name, String type, int address) {
+        paramTypes.add(type);
+        paramNames.add(name);
+        varTable.put(name, new VariableInfo(type, address, "local"));
     }
 
     public void addParamType(String type) {

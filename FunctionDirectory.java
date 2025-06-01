@@ -6,7 +6,7 @@ public class FunctionDirectory {
 
     public FunctionDirectory() {
         dir = new HashMap<>();
-        dir.put("global", new FunctionInfo("void")); // contexto global
+        dir.put("global", new FunctionInfo("void"));
     }
 
     public boolean addFunction(String name, String returnType) {

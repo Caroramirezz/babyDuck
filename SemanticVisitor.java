@@ -12,15 +12,27 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
         dir.setCurrentFunction("global");
     }
 
-    public FunctionDirectory getFunctionDirectory() { return dir; }
-    public QuadrupleGenerator getQuadGenerator()    { return qg;  }
-    public VirtualMemoryManager getVirtualMemoryManager() { return vmm; }
+    public FunctionDirectory getFunctionDirectory() {
+        return dir;
+    }
+
+    public QuadrupleGenerator getQuadGenerator() {
+        return qg;
+    }
+
+    public VirtualMemoryManager getVirtualMemoryManager() {
+        return vmm;
+    }
 
     @Override
     public Void visitPrograma(BabyDuckParser.ProgramaContext ctx) {
         // Visitar vars, funcs y body en orden
+        String mainLabel = qg.newLabel(); // Crear etiqueta para el inicio del body
+        qg.generateGoto(mainLabel); // Generar salto al body (se marca después)
+
         visit(ctx.vars());
         visit(ctx.funcs());
+        qg.markLabel(mainLabel); // Aquí va a empezar la ejecución
         visit(ctx.body());
         return null;
     }
@@ -28,9 +40,10 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
     @Override
     public Void visitVars(BabyDuckParser.VarsContext ctx) {
         // vars : ( VAR idList COLON type SEMICOLON )* ;
-        if (ctx.VAR().isEmpty()) return null;
+        if (ctx.VAR().isEmpty())
+            return null;
         List<BabyDuckParser.IdListContext> lists = ctx.idList();
-        List<BabyDuckParser.TypeContext>     types = ctx.type();
+        List<BabyDuckParser.TypeContext> types = ctx.type();
         for (int i = 0; i < lists.size(); i++) {
             String ty = types.get(i).getText();
             for (TerminalNode idNode : lists.get(i).ID()) {
@@ -47,7 +60,7 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
         // funcs : ( VOID ID LPAREN paramList? RPAREN vars body SEMICOLON )* ;
         List<TerminalNode> voids = ctx.VOID();
         for (int i = 0; i < voids.size(); i++) {
-            String fname = ctx.ID(i).getText();            
+            String fname = ctx.ID(i).getText();
             // Generar etiqueta de inicio de función
             qg.generateFuncBegin(fname);
             dir.addFunction(fname, "void");
@@ -61,7 +74,8 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
                     String ptype = p.type(j).getText();
                     int paddr = vmm.allocLocal(ptype);
                     dir.addVariableToCurrent(pname, ptype, paddr);
-                    dir.getFunction(fname).addParamType(ptype);
+                    //dir.getFunction(fname).addParamType(ptype);
+                    dir.getFunction(fname).addParam(pname, ptype, paddr);
                 }
             }
 
@@ -80,8 +94,10 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
     public Void visitAssign(BabyDuckParser.AssignContext ctx) {
         String id = ctx.ID().getText();
         VariableInfo vi = dir.getFunction(dir.currentFunction).getVariable(id);
-        if (vi == null) vi = dir.getFunction("global").getVariable(id);
-        if (vi == null) throw new RuntimeException("Variable no declarada: " + id);
+        if (vi == null)
+            vi = dir.getFunction("global").getVariable(id);
+        if (vi == null)
+            throw new RuntimeException("Variable no declarada: " + id);
         visit(ctx.expresion());
         qg.generateAssignmentAddress(vi.address);
         return null;
@@ -103,7 +119,7 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
     public Void visitCondition(BabyDuckParser.ConditionContext ctx) {
         visit(ctx.expresion());
         String cond = qg.peekOperand();
-        String Lf   = qg.newLabel();
+        String Lf = qg.newLabel();
         qg.generateGotoF(cond, Lf);
         visit(ctx.body(0));
         if (ctx.ELSE() != null) {
@@ -124,7 +140,7 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
         qg.markLabel(start);
         visit(ctx.expresion());
         String cond = qg.peekOperand();
-        String end   = qg.newLabel();
+        String end = qg.newLabel();
         qg.generateGotoF(cond, end);
         visit(ctx.body());
         qg.generateGoto(start);
@@ -163,7 +179,7 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
     public Void visitExp(BabyDuckParser.ExpContext ctx) {
         visit(ctx.termino(0));
         for (int i = 1; i < ctx.termino().size(); i++) {
-            String op = ctx.getChild(2*i-1).getText();
+            String op = ctx.getChild(2 * i - 1).getText();
             qg.pushOperator(op);
             visit(ctx.termino(i));
             qg.generateBinaryQuad();
@@ -175,7 +191,7 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
     public Void visitTermino(BabyDuckParser.TerminoContext ctx) {
         visit(ctx.factor(0));
         for (int i = 1; i < ctx.factor().size(); i++) {
-            String op = ctx.getChild(2*i-1).getText();
+            String op = ctx.getChild(2 * i - 1).getText();
             qg.pushOperator(op);
             visit(ctx.factor(i));
             qg.generateBinaryQuad();
@@ -189,14 +205,16 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
             visit(ctx.expresion());
         } else if (ctx.cte() != null) {
             String val = ctx.cte().getText();
-            String ty  = ctx.cte().CTE_INT() != null ? "int" : "float";
-            int addr   = vmm.allocConst(val, ty);
+            String ty = ctx.cte().CTE_INT() != null ? "int" : "float";
+            int addr = vmm.allocConst(val, ty);
             qg.pushOperandAddress(addr, ty);
         } else {
             String id = ctx.ID().getText();
             VariableInfo vi = dir.getFunction(dir.currentFunction).getVariable(id);
-            if (vi == null) vi = dir.getFunction("global").getVariable(id);
-            if (vi == null) throw new RuntimeException("Variable no declarada: " + id);
+            if (vi == null)
+                vi = dir.getFunction("global").getVariable(id);
+            if (vi == null)
+                throw new RuntimeException("Variable no declarada: " + id);
             qg.pushOperandAddress(vi.address, vi.type);
         }
         return null;

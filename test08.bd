@@ -1,0 +1,19 @@
+program funcTest;
+var x : int;
+
+void multAndPrint(a : int)
+var prod : int;
+{
+    if (a < 1) {
+        print("Terminamos");
+    } else {
+        print(a);
+        multAndPrint(a-1);
+        print(a);
+    }
+};
+
+main {
+    multAndPrint(5);
+}
+end
