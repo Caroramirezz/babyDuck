@@ -1,16 +1,25 @@
 program fib;
 var n, a, b, temp, i : int;
-main {
-    n = 10;
-    a = 0;
-    b = 1;
+
+void patito (a: int) {
+    print(a);
+}
+void pelos (n : int)
+    var i : int;{
     i = 0;
     while (i < n) do {
-        print(a);
+        patito(a);
         temp = a + b;
         a = b;
         b = temp;
         i = i + 1;
     }
+}
+
+main {
+    n = 10;
+    a = 0;
+    b = 1;
+    pelos(n);
 }
 end

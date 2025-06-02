@@ -7,7 +7,6 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
     private final VirtualMemoryManager vmm = new VirtualMemoryManager();
 
     public SemanticVisitor() {
-        // Contexto global
         dir.addFunction("global", "void");
         dir.setCurrentFunction("global");
     }
@@ -26,20 +25,18 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
 
     @Override
     public Void visitPrograma(BabyDuckParser.ProgramaContext ctx) {
-        // Visitar vars, funcs y body en orden
-        String mainLabel = qg.newLabel(); // Crear etiqueta para el inicio del body
-        qg.generateGoto(mainLabel); // Generar salto al body (se marca después)
+        String mainLabel = qg.newLabel();
+        qg.generateGoto(mainLabel);
 
         visit(ctx.vars());
         visit(ctx.funcs());
-        qg.markLabel(mainLabel); // Aquí va a empezar la ejecución
+        qg.markLabel(mainLabel);
         visit(ctx.body());
         return null;
     }
 
     @Override
     public Void visitVars(BabyDuckParser.VarsContext ctx) {
-        // vars : ( VAR idList COLON type SEMICOLON )* ;
         if (ctx.VAR().isEmpty())
             return null;
         List<BabyDuckParser.IdListContext> lists = ctx.idList();
@@ -57,7 +54,6 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
 
     @Override
     public Void visitFuncs(BabyDuckParser.FuncsContext ctx) {
-        // funcs : ( VOID ID LPAREN paramList? RPAREN vars body SEMICOLON )* ;
         List<TerminalNode> voids = ctx.VOID();
         for (int i = 0; i < voids.size(); i++) {
             String fname = ctx.ID(i).getText();
@@ -66,7 +62,6 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
             dir.addFunction(fname, "void");
             dir.setCurrentFunction(fname);
 
-            // Parámetros formales si existen
             if (ctx.paramList(i) != null) {
                 BabyDuckParser.ParamListContext p = ctx.paramList(i);
                 for (int j = 0; j < p.ID().size(); j++) {
@@ -79,11 +74,9 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
                 }
             }
 
-            // Variables locales y cuerpo de la función
             visit(ctx.vars(i));
             visit(ctx.body(i));
 
-            // Fin de la función
             qg.generateFuncEnd();
             dir.setCurrentFunction("global");
         }
@@ -151,7 +144,6 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
     @Override
     public Void visitF_call(BabyDuckParser.F_callContext ctx) {
         String fname = ctx.ID().getText();
-        // Preparar ERA
         qg.generateERA(fname);
         if (ctx.expresion() != null) {
             for (BabyDuckParser.ExpresionContext e : ctx.expresion()) {
@@ -159,7 +151,6 @@ public class SemanticVisitor extends BabyDuckBaseVisitor<Void> {
                 qg.generateParam();
             }
         }
-        // Generar llamada
         qg.generateGOSUB(fname);
         return null;
     }

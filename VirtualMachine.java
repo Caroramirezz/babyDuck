@@ -167,7 +167,6 @@ public class VirtualMachine {
                         throw new RuntimeException("Error: returnStack vacío en ENDPROC");
                     pc = returnStack.pop();
                     localMemory = localStack.pop();
-                    tempMemory = tempStack.pop();
                     break;
                 }
                 case "LABEL":

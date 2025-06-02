@@ -1,8 +1,6 @@
 grammar BabyDuck;
 
-// -------------------------
 // LÉXICO (Tokens)
-// -------------------------
 
 PROGRAM     : 'program';
 MAIN        : 'main';
@@ -40,9 +38,8 @@ CTE_STRING  : '"' (~["\\] | '\\' .)* '"';
 ID          : [a-zA-Z_][a-zA-Z0-9_]*;
 WS          : [ \t\r\n]+ -> skip;
 
-// -------------------------
+
 // SINTAXIS (Parser rules)
-// -------------------------
 
 programa         : PROGRAM ID SEMICOLON vars funcs MAIN body END;
 

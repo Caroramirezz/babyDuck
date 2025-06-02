@@ -1,8 +1,8 @@
 public class VariableInfo {
     
-    public String type;      // int, float, string
-    public int address;      // optional: memory address
-    public String scope;     // global, local, etc.
+    public String type;      
+    public int address;     
+    public String scope;    
 
     public VariableInfo(String type, int address, String scope) {
         this.type = type;

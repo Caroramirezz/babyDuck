@@ -9,7 +9,7 @@ var prod : int;
 };
 
 main {
-    multAndPrint(3, 4);
+    multAndPrint(a, 4);
     print(x);
 }
 end
